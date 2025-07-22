@@ -4,8 +4,9 @@ const repo = 'corner';
 
 const nextConfig = {
   output: 'export',
-  basePath: isGithubPages ? `/${repo}` : '',
-  assetPrefix: isGithubPages ? `/${repo}/` : '',
+  trailingSlash: true,
+  basePath: '/corner',
+  assetPrefix: '/corner/',
+  images: { unoptimized: true },
 };
-
 export default nextConfig;
