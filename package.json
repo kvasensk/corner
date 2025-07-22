@@ -2,6 +2,7 @@
   "name": "corner",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://kvasensk.github.io/corner",
   "scripts": {
     "start": "next start",
     "lint": "next lint",
