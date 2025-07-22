@@ -1,12 +1,11 @@
-const isGithubPages = process.env.GITHUB_ACTIONS === 'true';
-
 const repo = 'corner';
 
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
-  basePath: '/corner',
-  assetPrefix: '/corner/',
+  basePath: `/${repo}`,
+  assetPrefix: `/${repo}/`,
   images: { unoptimized: true },
 };
+
 export default nextConfig;
