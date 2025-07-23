@@ -1,1 +1,1 @@
-This is a corner queue
+This is a corner billiard queue
