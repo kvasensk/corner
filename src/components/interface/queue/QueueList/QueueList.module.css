@@ -1,65 +1,105 @@
-.list {
+.queueWrap {
   width: 100%;
-  max-width: 400px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 12px;
 }
 
-.item {
-  background: #fff;
-  border-radius: 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 20px #ffb6d5aa;
-  padding: 18px 22px;
+.nowPlayingBlock, .queueBlock {
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.label {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+.card {
+  background: #2a4edc;
+  border-radius: 18px;
+  padding: 16px 18px 14px 18px;
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  font-size: 1.15rem;
-  border-left: 6px solid #ffb6d5;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  box-shadow: 0 2px 12px #0d1e4a22;
+  margin-bottom: 0;
+  color: #fff;
+  font-size: 1.08rem;
+  font-family: inherit;
+  min-height: 48px;
+  margin-top: 0;
+  position: relative;
+  transition: box-shadow 0.2s;
 }
-.item:hover {
-  box-shadow: 0 8px 32px #e7548088;
-  border-left: 6px solid #e75480;
+
+.nowPlayingBlock .card {
+  background: linear-gradient(90deg, #2a4edc 80%, #1746d3 100%);
+  font-size: 1.13rem;
+  font-weight: 600;
 }
 
 .name {
-  color: #e75480;
-  font-weight: 700;
-}
-.time {
-  color: #b03060;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-left: 8px;
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: #fff;
 }
 
-.remove {
-  background: #ffb6d5;
-  border: none;
-  border-radius: 50%;
-  padding: 6px 12px;
-  color: #e75480;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #ffb6d566;
-  transition: background 0.2s, color 0.2s, transform 0.1s;
-  line-height: 1;
+.timeInfo {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.98rem;
+  color: #e0eaff;
+  font-weight: 400;
+  gap: 2px;
 }
-.remove:hover {
-  background: #e75480;
+
+.timeValue {
+  font-size: 1.13rem;
+  font-weight: 700;
   color: #fff;
-  transform: scale(1.15);
+  margin-top: 2px;
 }
 
 .empty {
   text-align: center;
-  color: #e75480;
-  margin-top: 24px;
-  font-size: 1.1rem;
-  text-shadow: 0 2px 8px #ffb6d5cc;
+  color: #e0eaff;
+  margin-top: 12px;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+@media (min-width: 601px) {
+  .queueWrap {
+    max-width: 500px;
+    gap: 32px;
+    padding: 0 0;
+  }
+  .card {
+    padding: 22px 28px 18px 28px;
+    font-size: 1.18rem;
+    min-height: 64px;
+  }
+  .nowPlayingBlock .card {
+    font-size: 1.25rem;
+  }
+  .name {
+    font-size: 1.18rem;
+  }
+  .label {
+    font-size: 1.1rem;
+  }
+  .timeValue {
+    font-size: 1.3rem;
+  }
 } 

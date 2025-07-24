@@ -1,12 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import styles from '../../../../pages/page.module.css';
+import styles from './queue.module.css';
 import { db } from '../../../lib/firebase';
 import {
   collection,
   addDoc,
-  deleteDoc,
-  doc,
   onSnapshot,
   query,
   orderBy,
@@ -18,6 +16,7 @@ export default function Queue() {
   const [name, setName] = useState('');
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
     const q = query(collection(db, 'queue'), orderBy('time'));
@@ -33,6 +32,11 @@ export default function Queue() {
     return () => unsub();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -43,42 +47,66 @@ export default function Queue() {
     setName('');
   };
 
-  const handleRemove = async (id: string) => {
-    await deleteDoc(doc(db, 'queue', id));
-  };
+  // Определяем время старта для первого в очереди
+  const startTime = queue.length > 0 ? new Date(queue[0].time) : null;
 
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}></div>
-        <h1 className={styles.heading} style={{ zIndex: 1 }}>
-          🎱 Очередь на бильярд{' '}
-        </h1>
-        <form onSubmit={handleAdd} className={styles.form}>
-          <input
-            type='text'
-            placeholder='Ваше имя'
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className={styles.inputText}
-            autoFocus
-            maxLength={20}
-          />
-          <button
-            type='submit'
-            className={styles.submitButton}
-            disabled={!name.trim()}
-            aria-label='Добавить в очередь'
-          >
-            +
+      {/* Шапка и меню */}
+      <header className={styles.header}>
+        <div className={styles.notch}></div>
+        <div className={styles.logo}>
+          <span className={styles.logoFont}>CORNER</span>
+          <span className={styles.logoSub}>COFFEE SPOT</span>
+        </div>
+        <nav className={styles.menu}>
+          <button className={styles.menuActive} type='button'>
+            Бильярд
           </button>
-        </form>
+          <button className={styles.menuInactive} type='button'>
+            Меню
+          </button>
+        </nav>
+      </header>
+      <main className={styles.main}>
         <QueueList
-          queue={[...queue].reverse()}
+          queue={queue}
           loading={loading}
-          handleRemove={handleRemove}
+          startTime={startTime}
+          now={now}
         />
       </main>
+      {/* Форма добавления в очередь */}
+      <div className={styles.formBlock}>
+        <div className={styles.formHintRow}>
+          <span className={styles.formHint}>
+            Чтобы встать в очередь, нужно купить напиток и подождать*
+          </span>
+          <span className={styles.formInfoIcon}>i</span>
+        </div>
+        <form onSubmit={handleAdd} className={styles.form}>
+          <div className={styles.formInner}>
+            <input
+              type='text'
+              placeholder='Имя'
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className={styles.input}
+              autoFocus
+              maxLength={20}
+            />
+            <button
+              type='submit'
+              className={styles.button}
+              disabled={!name.trim()}
+              aria-label='В очередь'
+            >
+              В очередь
+            </button>
+          </div>
+        </form>
+      </div>
+      <div className={styles.formNote}>*1 напиток = 20 минут</div>
     </div>
   );
 }

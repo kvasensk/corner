@@ -4,50 +4,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #fff0f6 0%, #ffb6d5 100%);
+  /* background: linear-gradient(135deg, #fff0f6 0%, #ffb6d5 100%); */
   font-family: inherit;
   position: relative;
   overflow: hidden;
 }
 
-.page::before,
-.page::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  border-radius: 50%;
-  opacity: 0.5;
-  pointer-events: none;
-}
+/* Для страницы очереди фон задаётся inline-стилем в компоненте Queue */
 
-.page::before {
-  width: 220px;
-  height: 90px;
-  left: 10vw;
-  top: 8vh;
-  background: #fff;
-  box-shadow: 60px 0 0 0 #fff, 120px 10px 0 0 #fff, 180px -10px 0 0 #fff;
-  animation: cloud-move-x 18s linear infinite alternate;
-}
-
-.page::after {
-  width: 160px;
-  height: 60px;
-  right: 8vw;
-  bottom: 10vh;
-  background: #fff;
-  box-shadow: 40px 0 0 0 #fff, 80px 10px 0 0 #fff;
-  animation: cloud-move-x2 22s linear infinite alternate;
-}
-
-@keyframes cloud-move-x {
-  0% { left: 5vw; }
-  100% { left: 25vw; }
-}
-@keyframes cloud-move-x2 {
-  0% { right: 8vw; }
-  100% { right: 28vw; }
-}
+/* Удалены .page::before, .page::after и связанные keyframes для облаков */
 
 .main {
   display: flex;
@@ -131,5 +96,11 @@
     width: 44px;
     height: 44px;
     font-size: 1.3rem;
+  }
+  .page::before {
+    animation-duration: 6s !important;
+  }
+  .page::after {
+    animation-duration: 7.3s !important;
   }
 }

@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.uploadButton {
+  background: #ffb6d5;
+  color: #e75480;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 0;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.previewImg {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #eee;
+  margin-top: 4px;
+}
+
+.error {
+  color: #fd1d86;
+  font-weight: 500;
+} 
