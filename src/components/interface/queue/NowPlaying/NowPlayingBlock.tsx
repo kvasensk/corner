@@ -76,7 +76,12 @@ export default function NowPlayingBlock({
               }}
               title='Управление'
             >
-              &#8942;
+              <svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
+                <circle cx='12' cy='12' r='10' fill='#e0eaff' />
+                <circle cx='12' cy='8' r='1.5' fill='#1746d3' />
+                <circle cx='12' cy='12' r='1.5' fill='#1746d3' />
+                <circle cx='12' cy='16' r='1.5' fill='#1746d3' />
+              </svg>
             </button>
           )}
         </div>

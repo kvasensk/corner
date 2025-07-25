@@ -25,8 +25,8 @@
 
 .card {
   background: #103ef5;
-  border-radius: 18px;
-  padding: 16px 18px 14px 18px;
+  border-radius: 12px;
+  padding: 8px 10px 8px 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -34,9 +34,9 @@
   box-shadow: 0 2px 12px #0d1e4a22;
   margin-bottom: 8px;
   color: #fff;
-  font-size: 1.08rem;
+  font-size: 0.95rem;
   font-family: inherit;
-  min-height: 48px;
+  min-height: 36px;
   margin-top: 0;
   position: relative;
   transition: box-shadow 0.2s;
@@ -44,7 +44,7 @@
 
 .nowPlayingBlock .card {
   background: #103ef5;
-  font-size: 1.13rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
@@ -52,7 +52,7 @@
 
 .name {
   font-weight: 500;
-  font-size: 1.08rem;
+  font-size: 1rem;
   color: #fff;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .timeValue {
-  font-size: 1.03rem;
+  font-size: 1rem;
   letter-spacing: 1px;
   font-weight: 600;
   color: #fff;
@@ -156,6 +156,10 @@
   padding: 2px 8px;
   border-radius: 6px;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 .adminMenuBtn:hover {
   background: #e0eaff33;
@@ -168,20 +172,20 @@
     padding: 0 0;
   }
   .card {
-    padding: 22px 28px 18px 28px;
-    font-size: 1.18rem;
-    min-height: 64px;
+    padding: 12px 16px 10px 16px;
+    font-size: 1rem;
+    min-height: 40px;
   }
   .nowPlayingBlock .card {
-    font-size: 1.25rem;
+    font-size: 1.08rem;
   }
   .name {
-    font-size: 1.18rem;
+    font-size: 1rem;
   }
   .label {
     font-size: 1.1rem;
   }
   .timeValue {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
   }
 } 

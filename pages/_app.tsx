@@ -2,7 +2,6 @@ import type { AppProps } from 'next/app';
 import '../src/styles/globals.css';
 import { Quicksand } from 'next/font/google';
 import React, { useEffect, useState } from 'react';
-import BurgerMenu from '../src/components/common/BurgerMenu';
 import { useRouter } from 'next/router';
 import { getPlatformConfig, PlatformConfig } from '../src/lib/firebase';
 

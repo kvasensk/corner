@@ -173,9 +173,9 @@ function PlatformSettings() {
           <IOSSwitch
             checked={config.showInfoTab}
             onChange={handleChange('showInfoTab')}
-            disabled={saving}
+            disabled
           />
-          <span style={{ color: '#171717' }}>Инфо</span>
+          <span style={{ color: '#bbb' }}>Инфо (в разработке)</span>
         </label>
         <label
           style={{
@@ -185,14 +185,7 @@ function PlatformSettings() {
             fontSize: '1.1rem',
             width: '100%',
           }}
-        >
-          <IOSSwitch
-            checked={config.showClientBurger}
-            onChange={handleChange('showClientBurger')}
-            disabled={saving}
-          />
-          <span style={{ color: '#171717' }}>Клиентский бургер-меню</span>
-        </label>
+        ></label>
       </div>
       {saving && (
         <div style={{ color: '#7c1fa0', marginTop: 16 }}>Сохраняем...</div>

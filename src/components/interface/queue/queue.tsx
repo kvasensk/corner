@@ -19,6 +19,7 @@ import NowPlayingBlock from './NowPlaying/NowPlayingBlock';
 import { QueueEntry } from '../../../types/queue';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { getPlatformConfig, PlatformConfig } from '../../../lib/firebase';
 
 export default function Queue() {
   const [name, setName] = useState('');
@@ -27,6 +28,9 @@ export default function Queue() {
   const [now, setNow] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
+  const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(
+    null
+  );
 
   useEffect(() => {
     const q = query(collection(db, 'queue'), orderBy('time'));
@@ -47,23 +51,38 @@ export default function Queue() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    getPlatformConfig().then(setPlatformConfig);
+  }, []);
+
   // --- Синхронизация статусов с базой (функция) ---
   const syncStatuses = async () => {
     if (!current && waiting.length === 0 && done.length === 0) return;
     // current
-    if (current && current.status !== 'playing') {
-      await updateDoc(doc(db, 'queue', current.id), { status: 'playing' });
+    if (current) {
+      if (current.status !== 'playing' || !current.startTime) {
+        await updateDoc(doc(db, 'queue', current.id), {
+          status: 'playing',
+          startTime: current.startTime || Date.now(),
+        });
+      }
     }
     // waiting
     for (const entry of waiting) {
-      if (entry.status !== 'waiting') {
-        await updateDoc(doc(db, 'queue', entry.id), { status: 'waiting' });
+      if (entry.status !== 'waiting' || entry.startTime !== 0) {
+        await updateDoc(doc(db, 'queue', entry.id), {
+          status: 'waiting',
+          startTime: 0,
+        });
       }
     }
     // done
     for (const entry of done) {
-      if (entry.status !== 'done') {
-        await updateDoc(doc(db, 'queue', entry.id), { status: 'done' });
+      if (entry.status !== 'done' || entry.startTime !== 0) {
+        await updateDoc(doc(db, 'queue', entry.id), {
+          status: 'done',
+          startTime: 0,
+        });
       }
     }
   };
@@ -75,6 +94,7 @@ export default function Queue() {
       name: name.trim(),
       time: new Date().toISOString(),
       status: 'waiting',
+      startTime: 0,
     });
     setName('');
     syncStatuses();
@@ -91,10 +111,14 @@ export default function Queue() {
     let prevEnd: number | null = null;
     for (let i = 0; i < notDone.length; i++) {
       const entry = notDone[i];
-      const entryStart: number =
-        prevEnd !== null
-          ? Math.max(new Date(entry.time).getTime(), prevEnd)
-          : new Date(entry.time).getTime();
+      let entryStart: number = 0;
+      if (entry.startTime && entry.startTime > 0) {
+        entryStart = entry.startTime;
+      } else if (prevEnd !== null) {
+        entryStart = Math.max(new Date(entry.time).getTime(), prevEnd);
+      } else {
+        entryStart = new Date(entry.time).getTime();
+      }
       const entryEnd: number = entryStart + 25 * 60 * 1000;
       if (now >= entryStart && now < entryEnd && !current) {
         current = entry;
@@ -158,7 +182,7 @@ export default function Queue() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.logo}>
           <Image
             src={cornerLogo}
@@ -172,11 +196,13 @@ export default function Queue() {
           <button className={styles.menuActive} type='button'>
             Бильярд
           </button>
-          <button className={styles.menuInactive} type='button'>
-            Меню
-          </button>
+          {platformConfig?.showMenuTab && (
+            <button className={styles.menuInactive} type='button'>
+              Меню
+            </button>
+          )}
         </div>
-      </header>
+      </div>
       {isAdmin && (
         <div className={styles.adminPanel}>
           <div

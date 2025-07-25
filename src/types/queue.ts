@@ -3,4 +3,5 @@ export interface QueueEntry {
   name: string;
   time: string;
   status: 'waiting' | 'playing' | 'done';
+  startTime: number;
 }
