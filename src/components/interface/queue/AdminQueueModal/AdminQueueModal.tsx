@@ -43,14 +43,16 @@ export default function AdminQueueModal({
         </div>
         <button
           onClick={onDone}
-          disabled={finishing || user.status === 'done'}
+          disabled={finishing || user.status !== 'playing'}
           className={styles.doneBtn}
         >
           {finishing
             ? 'Завершение...'
             : user.status === 'done'
             ? 'Игра завершена'
-            : 'Завершить игру'}
+            : user.status === 'playing'
+            ? 'Завершить игру'
+            : 'Ожидание начала'}
         </button>
         <button
           onClick={onClose}

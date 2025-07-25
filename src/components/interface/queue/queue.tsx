@@ -20,6 +20,7 @@ import { QueueEntry } from '../../../types/queue';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getPlatformConfig, PlatformConfig } from '../../../lib/firebase';
+import AdminQueueModal from './AdminQueueModal/AdminQueueModal';
 
 export default function Queue() {
   const [name, setName] = useState('');
@@ -31,6 +32,8 @@ export default function Queue() {
   const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(
     null
   );
+  const [deleting, setDeleting] = useState(false);
+  const [finishing, setFinishing] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, 'queue'), orderBy('time'));
@@ -59,17 +62,15 @@ export default function Queue() {
   const syncStatuses = async () => {
     if (!current && waiting.length === 0 && done.length === 0) return;
     // current
-    if (current) {
-      if (current.status !== 'playing' || !current.startTime) {
-        await updateDoc(doc(db, 'queue', current.id), {
-          status: 'playing',
-          startTime: current.startTime || Date.now(),
-        });
-      }
+    if (current && current.status !== 'playing' && current.status !== 'done') {
+      await updateDoc(doc(db, 'queue', current.id), {
+        status: 'playing',
+        startTime: Date.now(), // всегда новое время!
+      });
     }
     // waiting
     for (const entry of waiting) {
-      if (entry.status !== 'waiting' || entry.startTime !== 0) {
+      if (entry.status !== 'waiting' && entry.status !== 'done') {
         await updateDoc(doc(db, 'queue', entry.id), {
           status: 'waiting',
           startTime: 0,
@@ -78,7 +79,7 @@ export default function Queue() {
     }
     // done
     for (const entry of done) {
-      if (entry.status !== 'done' || entry.startTime !== 0) {
+      if (entry.status !== 'done') {
         await updateDoc(doc(db, 'queue', entry.id), {
           status: 'done',
           startTime: 0,
@@ -131,8 +132,20 @@ export default function Queue() {
         prevEnd = entryEnd;
       }
     }
+    // Логируем для отладки
+    console.log('QUEUE:', queue);
+    console.log('CURRENT:', current);
+    console.log('WAITING:', waiting);
+    console.log('DONE:', done);
     return { current, timeLeft, waiting, done };
   }, [queue]);
+
+  useEffect(() => {
+    if (current && current.status !== 'playing' && current.status !== 'done') {
+      syncStatuses();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current]);
 
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -151,6 +164,24 @@ export default function Queue() {
     await Promise.all(batch);
     setShowModal(false);
   }
+
+  const handleDelete = async () => {
+    if (!modalUser) return;
+    setDeleting(true);
+    await deleteDoc(doc(db, 'queue', modalUser.id));
+    setDeleting(false);
+    setModalUser(null);
+    await syncStatuses();
+  };
+
+  const handleDone = async () => {
+    if (!modalUser) return;
+    setFinishing(true);
+    await updateDoc(doc(db, 'queue', modalUser.id), { status: 'done' });
+    setFinishing(false);
+    setModalUser(null);
+    await syncStatuses();
+  };
 
   // --- Синхронизация статусов с базой раз в минуту (только для админа) ---
   useEffect(() => {
@@ -180,6 +211,8 @@ export default function Queue() {
     return () => clearInterval(interval);
   }, [isAdmin, current, waiting, done]);
 
+  // Перед рендером AdminQueueModal
+  // console.log('RENDER AdminQueueModal', { modalUser, open: !!modalUser });
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -231,6 +264,15 @@ export default function Queue() {
           </div>
         </div>
       )}
+      <AdminQueueModal
+        user={modalUser}
+        open={!!modalUser}
+        onClose={() => setModalUser(null)}
+        onDelete={handleDelete}
+        onDone={handleDone}
+        deleting={deleting}
+        finishing={finishing}
+      />
       <div className={styles.queueContainer}>
         {current && (
           <NowPlayingBlock
