@@ -225,6 +225,7 @@ export default function AdminPage() {
   const [platformConfig, setPlatformConfigState] =
     useState<PlatformConfig | null>(null);
   const isAdmin = true;
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -245,6 +246,7 @@ export default function AdminPage() {
         setIsAuth(true);
         if (typeof window !== 'undefined') {
           localStorage.setItem('isAdmin', 'true');
+          router.push('/');
         }
       } else {
         setError('Неверный логин или пароль');
@@ -260,6 +262,7 @@ export default function AdminPage() {
     setIsAuth(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('isAdmin');
+      router.push('/');
     }
   };
 

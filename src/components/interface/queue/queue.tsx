@@ -159,7 +159,6 @@ export default function Queue() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.notch}></div>
         <div className={styles.logo}>
           <Image
             src={cornerLogo}

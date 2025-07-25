@@ -9,7 +9,7 @@
 .header {
   width: 100%;
   margin: 0 auto;
-  padding: 24px 12px  0px 12px; /* отступ под челку */
+  padding: 0px 12px 0px 12px; /* отступ под челку */
   display: flex;
   flex-direction: row;
   align-items: center;
