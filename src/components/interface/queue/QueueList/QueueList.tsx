@@ -1,6 +1,9 @@
 import styles from './QueueList.module.css';
 import { QueueEntry } from '../../../../types/queue';
 import { useEffect, useState } from 'react';
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../../lib/firebase';
+import AdminQueueModal from '../AdminQueueModal/AdminQueueModal';
 
 interface QueueListProps {
   queue: QueueEntry[];
@@ -17,22 +20,87 @@ function formatTimeLeft(ms: number) {
   return h > 0 ? `${h}ч ${m} мин` : `${m} мин`;
 }
 
-export default function QueueList({
-  queue,
-  loading,
-  startTime,
-  now,
-}: QueueListProps) {
+function useTimeLeft(startTimeStr: string | null) {
   const [timeLeft, setTimeLeft] = useState(0);
-
   useEffect(() => {
-    if (!startTime) return;
-    const interval = setInterval(() => {
+    if (!startTimeStr) return;
+    const startTime = new Date(startTimeStr);
+    const update = () =>
       setTimeLeft(25 * 60 * 1000 - (Date.now() - startTime.getTime()));
-    }, 1000);
-    setTimeLeft(25 * 60 * 1000 - (Date.now() - startTime.getTime()));
+    update();
+    const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
-  }, [startTime]);
+  }, [startTimeStr]);
+  return timeLeft;
+}
+
+function QueueCard({
+  entry,
+  idx,
+  startTime,
+}: {
+  entry: QueueEntry;
+  idx: number;
+  startTime: Date | null;
+}) {
+  const waitMs =
+    (idx + 1) * 25 * 60 * 1000 -
+    (startTime ? Date.now() - startTime.getTime() : 0);
+  return (
+    <div className={styles.card} key={entry.id}>
+      <div className={styles.cardContent}>
+        <span className={styles.name}>{entry.name}</span>
+        <span className={styles.queueTime}>
+          (
+          {new Date(entry.time).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+          )
+        </span>
+      </div>
+      <span className={styles.timeInfo}>
+        Начало через
+        <span className={styles.timeValue}>~{formatTimeLeft(waitMs)}</span>
+      </span>
+    </div>
+  );
+}
+
+export default function QueueList({
+  waiting,
+  done,
+  loading,
+  isAdmin,
+  syncStatuses,
+}: {
+  waiting: Array<QueueEntry & { waitMs: number }>;
+  done: QueueEntry[];
+  loading: boolean;
+  isAdmin?: boolean;
+  syncStatuses: () => Promise<void>;
+}) {
+  const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [finishing, setFinishing] = useState(false);
+
+  const handleDelete = async () => {
+    if (!modalUser) return;
+    setDeleting(true);
+    await deleteDoc(doc(db, 'queue', modalUser.id));
+    setDeleting(false);
+    setModalUser(null);
+    await syncStatuses();
+  };
+
+  const handleDone = async () => {
+    if (!modalUser) return;
+    setFinishing(true);
+    await updateDoc(doc(db, 'queue', modalUser.id), { status: 'done' });
+    setFinishing(false);
+    setModalUser(null);
+    await syncStatuses();
+  };
 
   if (loading)
     return (
@@ -40,50 +108,112 @@ export default function QueueList({
         <li className={styles.empty}>Загрузка...</li>
       </ul>
     );
-  if (queue.length === 0)
+  if (waiting.length === 0 && done.length === 0)
     return (
       <ul className={styles.list}>
         <li className={styles.empty}>Очередь пуста</li>
       </ul>
     );
-
-  const [current, ...rest] = queue;
   return (
     <div className={styles.queueWrap}>
-      <div className={styles.nowPlayingBlock}>
-        <div className={styles.label}>Играет сейчас:</div>
-        <div className={styles.card}>
-          <span className={styles.name}>{current.name}</span>
-          <span className={styles.timeInfo}>
-            Осталось играть
-            <span className={styles.timeValue}>{formatTimeLeft(timeLeft)}</span>
-          </span>
-        </div>
-      </div>
       <div className={styles.queueBlock}>
-        <div className={styles.label}>Очередь:</div>
-        {rest.length === 0 ? (
-          <div className={styles.empty}>Очередь пуста</div>
-        ) : (
-          rest.map((entry, idx) => {
-            // Время ожидания = (idx+1) * 25 мин - остаток текущего таймера
-            const waitMs =
-              (idx + 1) * 25 * 60 * 1000 -
-              (startTime ? Date.now() - startTime.getTime() : 0);
-            return (
-              <div className={styles.card} key={entry.id}>
-                <span className={styles.name}>{entry.name}</span>
-                <span className={styles.timeInfo}>
-                  Начало через
-                  <span className={styles.timeValue}>
-                    {formatTimeLeft(waitMs)}
-                  </span>
+        {waiting.map((entry, idx) => (
+          <div className={styles.card} key={entry.id}>
+            <div className={styles.cardContent}>
+              <span className={styles.name}>{entry.name}</span>
+              <span className={styles.queueTime}>
+                (
+                {new Date(entry.time).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+                )
+              </span>
+              {isAdmin && (
+                <span className={styles.statusTag}>
+                  {entry.status === 'playing' && 'Играет'}
+                  {entry.status === 'waiting' && 'В очереди'}
+                  {entry.status === 'done' && 'Сыграл'}
                 </span>
-              </div>
-            );
-          })
-        )}
+              )}
+            </div>
+            <div className={styles.wrap}>
+              <span className={styles.timeInfo}>
+                Начало через
+                <span className={styles.timeValue}>
+                  ~{formatTimeLeft(entry.waitMs)}
+                </span>
+              </span>
+              {isAdmin && (
+                <button
+                  className={styles.adminMenuBtn}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setModalUser(entry);
+                  }}
+                  onTouchStart={e => {
+                    e.stopPropagation();
+                    setModalUser(entry);
+                  }}
+                  title='Управление'
+                >
+                  &#8942;
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+        {done.map(entry => (
+          <div className={`${styles.card} ${styles.cardDone}`} key={entry.id}>
+            <div className={styles.cardContent}>
+              <span className={`${styles.name} ${styles.nameDone}`}>
+                {entry.name}
+              </span>
+              <span className={styles.queueTime}>
+                (
+                {new Date(entry.time).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+                )
+              </span>
+              {/* {isAdmin && (
+                <button
+                  className={styles.adminMenuBtn}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setModalUser(entry);
+                  }}
+                  onTouchStart={e => {
+                    e.stopPropagation();
+                    setModalUser(entry);
+                  }}
+                  title='Управление'
+                >
+                  &#8942;
+                </button>
+              )} */}
+              {isAdmin && (
+                <span className={styles.statusTag}>
+                  {entry.status === 'playing' && 'Играет'}
+                  {entry.status === 'waiting' && 'В очереди'}
+                  {entry.status === 'done' && 'Сыграл'}
+                </span>
+              )}
+            </div>
+            <span className={styles.timeInfo}>Сыграл</span>
+          </div>
+        ))}
       </div>
+      <AdminQueueModal
+        user={modalUser}
+        open={!!modalUser}
+        onClose={() => setModalUser(null)}
+        onDelete={handleDelete}
+        onDone={handleDone}
+        deleting={deleting}
+        finishing={finishing}
+      />
     </div>
   );
 }

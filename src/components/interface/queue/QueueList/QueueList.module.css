@@ -4,27 +4,27 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 24px;
-  padding: 0 12px;
 }
 
 .nowPlayingBlock, .queueBlock {
-  width: 100%;
+  width: 94%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .label {
+  padding-left: 12px;
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  margin-bottom: 8px;
-  letter-spacing: 0.2px;
+  margin-bottom: 6px;
+  letter-spacing: 0.4px;
 }
 
 .card {
-  background: #2a4edc;
+  background: #103ef5;
   border-radius: 18px;
   padding: 16px 18px 14px 18px;
   display: flex;
@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 12px #0d1e4a22;
-  margin-bottom: 0;
+  margin-bottom: 8px;
   color: #fff;
   font-size: 1.08rem;
   font-family: inherit;
@@ -43,13 +43,15 @@
 }
 
 .nowPlayingBlock .card {
-  background: linear-gradient(90deg, #2a4edc 80%, #1746d3 100%);
+  background: #103ef5;
   font-size: 1.13rem;
   font-weight: 600;
 }
 
+
+
 .name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.08rem;
   color: #fff;
 }
@@ -57,18 +59,35 @@
 .timeInfo {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  font-size: 0.98rem;
+  align-items: center;
+  font-size: 0.78rem;
   color: #e0eaff;
-  font-weight: 400;
-  gap: 2px;
+  font-weight: 500;
+  /* gap: 2px; */
 }
 
 .timeValue {
-  font-size: 1.13rem;
-  font-weight: 700;
+  font-size: 1.03rem;
+  letter-spacing: 1px;
+  font-weight: 600;
   color: #fff;
   margin-top: 2px;
+}
+
+.queueTime {
+  display: block;
+  font-size: 11px;
+  color: #b3c6f7;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.statusTag {
+  display: block;
+  font-size: 11px;
+  color: #b3c6f7;
+  margin-top: 2px;
+  font-style: italic;
 }
 
 .empty {
@@ -77,6 +96,69 @@
   margin-top: 12px;
   font-size: 1rem;
   font-weight: 400;
+}
+
+.cardDone {
+  opacity: 0.5;
+  background: #b3c6f7 !important;
+}
+
+.nameDone {
+  text-decoration: line-through;
+  color: #555 !important;
+}
+
+.swipeWrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.swipePanel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  background: #ffd600;
+  color: #1746d3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  z-index: 1;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.cardSwipe {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.2s;
+  will-change: transform;
+}
+
+.cardDone .queueTime {
+  color: #e0eaff !important;
+}
+.wrap{
+  display: flex;
+  gap: 6px;
+}
+
+.adminMenuBtn {
+  background: none;
+  border: none;
+  color: #b3c6f7;
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.adminMenuBtn:hover {
+  background: #e0eaff33;
 }
 
 @media (min-width: 601px) {
