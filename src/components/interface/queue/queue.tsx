@@ -61,11 +61,29 @@ export default function Queue() {
   // --- Синхронизация статусов с базой (функция) ---
   const syncStatuses = async () => {
     if (!current && waiting.length === 0 && done.length === 0) return;
+
+    // Получаем актуальный список очереди из базы
+    const q = await getDocs(query(collection(db, 'queue')));
+    const allEntries = q.docs.map(doc => ({
+      ...(doc.data() as QueueEntry),
+      id: doc.id,
+    }));
+
+    // Проверяем, есть ли другой игрок со статусом playing (кроме current)
+    const anotherPlaying = allEntries.find(
+      entry => entry.status === 'playing' && entry.id !== current?.id
+    );
+
     // current
-    if (current && current.status !== 'playing' && current.status !== 'done') {
+    if (
+      !anotherPlaying &&
+      current &&
+      current.status !== 'playing' &&
+      current.status !== 'done'
+    ) {
       await updateDoc(doc(db, 'queue', current.id), {
         status: 'playing',
-        startTime: Date.now(), // всегда новое время!
+        startTime: Date.now(),
       });
     }
     // waiting
@@ -132,11 +150,7 @@ export default function Queue() {
         prevEnd = entryEnd;
       }
     }
-    // Логируем для отладки
-    console.log('QUEUE:', queue);
-    console.log('CURRENT:', current);
-    console.log('WAITING:', waiting);
-    console.log('DONE:', done);
+
     return { current, timeLeft, waiting, done };
   }, [queue]);
 
@@ -245,12 +259,12 @@ export default function Queue() {
           >
             Администратор
           </div>
-          <button
+          <div
             className={styles.adminBtnClear}
             onClick={() => setShowModal(true)}
           >
             Очистить очередь
-          </button>
+          </div>
         </div>
       )}
       {showModal && (
