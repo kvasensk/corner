@@ -104,3 +104,29 @@
     animation-duration: 7.3s !important;
   }
 }
+
+.loaderWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #1746d3;
+}
+
+.loaderSvg {
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loaderText {
+  color: #fff;
+  margin-top: 24px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}

@@ -10,7 +10,6 @@ interface Tab {
 interface AdminBurgerMenuProps {
   activeTab: string;
   onTabChange: (tabId: string) => void;
-  showClientBurger?: boolean;
   isAdmin?: boolean;
   onLogout?: () => void;
 }
@@ -18,7 +17,6 @@ interface AdminBurgerMenuProps {
 export default function AdminBurgerMenu({
   activeTab,
   onTabChange,
-  showClientBurger = true,
   isAdmin = false,
   onLogout,
 }: AdminBurgerMenuProps) {
@@ -43,13 +41,6 @@ export default function AdminBurgerMenu({
         <span className={styles.burgerLine} />
       </button>
       <nav className={open ? styles.menuOpen : styles.menuClosed}>
-        {isAdmin && !showClientBurger && (
-          <div className={styles.adminWarning}>
-            Бургер-меню скрыто для клиентов.
-            <br />
-            Включите его в настройках платформы.
-          </div>
-        )}
         <ul className={styles.tabList}>
           {tabs.map(tab => (
             <li key={tab.id}>

@@ -5,7 +5,6 @@ import styles from './PlatformSettings.module.css';
 export type PlatformConfig = {
   showMenuTab: boolean;
   showInfoTab: boolean;
-  showClientBurger: boolean;
 };
 
 export default function PlatformSettings() {

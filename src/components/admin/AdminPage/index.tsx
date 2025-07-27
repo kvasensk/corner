@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import AdminBurgerMenu from '../AdminBurgerMenu';
 import { useRouter } from 'next/router';
 import PlatformSettings from '../PlatformSettings';
 import type { PlatformConfig } from '../PlatformSettings';
 import MenuSettings from '../MenuSettings';
 import InfoSettings from '../InfoSettings';
 import styles from './AdminPage.module.css';
+import AdminBurgerMenu from '../AdminBurgerMenu';
 
 export default function AdminPage() {
   const [username, setUsername] = useState('');
@@ -79,9 +79,6 @@ export default function AdminPage() {
           activeTab={activeTab}
           onTabChange={tabId =>
             setActiveTab(tabId as 'platform' | 'menu' | 'info')
-          }
-          showClientBurger={
-            platformConfig ? platformConfig.showClientBurger : true
           }
           isAdmin={isAdmin}
           onLogout={handleLogout}
