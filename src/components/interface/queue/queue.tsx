@@ -23,10 +23,11 @@ import { getPlatformConfig, PlatformConfig } from '../../../lib/firebase';
 import AdminQueueModal from './AdminQueueModal/AdminQueueModal';
 
 export default function Queue() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(Date.now());
   const [showModal, setShowModal] = useState(false);
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(
@@ -34,7 +35,85 @@ export default function Queue() {
   );
   const [deleting, setDeleting] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  // Очистка очереди
+  async function handleClearQueue() {
+    const q = await getDocs(collection(db, 'queue'));
+    const batch: Promise<void>[] = [];
+    q.forEach(docSnap => {
+      batch.push(deleteDoc(doc(db, 'queue', docSnap.id)));
+    });
+    await Promise.all(batch);
+    setShowModal(false);
+  }
+
+  // Удаление игрока
+  const handleDelete = async () => {
+    if (!modalUser) return;
+    setDeleting(true);
+    await deleteDoc(doc(db, 'queue', modalUser.id));
+    setDeleting(false);
+    setModalUser(null);
+  };
+
+  // Завершение игры для игрока
+  const handleDone = async () => {
+    if (!modalUser) return;
+    setFinishing(true);
+    await updateDoc(doc(db, 'queue', modalUser.id), {
+      status: 'done',
+      startTime: 0,
+    });
+    setFinishing(false);
+    setModalUser(null);
+  };
+
+  // Добавление игрока
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    // Проверяем, есть ли сейчас playing или waiting
+    const q = await getDocs(collection(db, 'queue'));
+    const entries = q.docs.map(doc => doc.data() as QueueEntry);
+    const hasActive = entries.some(
+      q => q.status === 'playing' || q.status === 'waiting'
+    );
+    await addDoc(collection(db, 'queue'), {
+      name: name.trim(),
+      time: new Date().toISOString(),
+      status: hasActive ? 'waiting' : 'playing',
+      startTime: hasActive ? 0 : Date.now(),
+    });
+    setName('');
+  };
+
+  // Основная логика очереди
+  const { current, timeLeft, waiting, done } = useMemo(() => {
+    const nowMs = now;
+    const playing = queue.find(q => q.status === 'playing');
+    const waiting = queue
+      .filter(q => q.status === 'waiting')
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    const done = queue
+      .filter(q => q.status === 'done')
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    const current = playing || null;
+    let timeLeft = 0;
+    // Используем gameDuration из platformConfig, если есть
+    const duration =
+      platformConfig && (platformConfig as PlatformConfig).gameDuration
+        ? (platformConfig as PlatformConfig).gameDuration
+        : 25;
+    const GAME_DURATION = duration * 60 * 1000;
+    if (current && current.startTime) {
+      timeLeft = GAME_DURATION - (nowMs - current.startTime);
+      if (timeLeft < 0) timeLeft = 0;
+    }
+    return { current, timeLeft, waiting, done };
+  }, [queue, now, platformConfig]);
+
+  // Подписка на очередь
   useEffect(() => {
     const q = query(collection(db, 'queue'), orderBy('time'));
     const unsub = onSnapshot(q, snapshot => {
@@ -49,8 +128,9 @@ export default function Queue() {
     return () => unsub();
   }, []);
 
+  // Таймер для обновления времени
   useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 1000);
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -58,175 +138,39 @@ export default function Queue() {
     getPlatformConfig().then(setPlatformConfig);
   }, []);
 
-  // --- Синхронизация статусов с базой (функция) ---
-  const syncStatuses = async () => {
-    if (!current && waiting.length === 0 && done.length === 0) return;
-
-    // Получаем актуальный список очереди из базы
-    const q = await getDocs(query(collection(db, 'queue')));
-    const allEntries = q.docs.map(doc => ({
-      ...(doc.data() as QueueEntry),
-      id: doc.id,
-    }));
-
-    // Проверяем, есть ли другой игрок со статусом playing (кроме current)
-    const anotherPlaying = allEntries.find(
-      entry => entry.status === 'playing' && entry.id !== current?.id
-    );
-
-    // current
-    if (
-      !anotherPlaying &&
-      current &&
-      current.status !== 'playing' &&
-      current.status !== 'done'
-    ) {
-      await updateDoc(doc(db, 'queue', current.id), {
-        status: 'playing',
-        startTime: Date.now(),
-      });
-    }
-    // waiting
-    for (const entry of waiting) {
-      if (entry.status !== 'waiting' && entry.status !== 'done') {
-        await updateDoc(doc(db, 'queue', entry.id), {
-          status: 'waiting',
-          startTime: 0,
-        });
-      }
-    }
-    // done
-    for (const entry of done) {
-      if (entry.status !== 'done') {
-        await updateDoc(doc(db, 'queue', entry.id), {
-          status: 'done',
-          startTime: 0,
-        });
-      }
-    }
-  };
-
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    await addDoc(collection(db, 'queue'), {
-      name: name.trim(),
-      time: new Date().toISOString(),
-      status: 'waiting',
-      startTime: 0,
-    });
-    setName('');
-    syncStatuses();
-  };
-
-  // --- Новый алгоритм очереди (useMemo для чистоты, done внизу) ---
-  const { current, timeLeft, waiting, done } = useMemo(() => {
-    const now = Date.now();
-    const done = queue.filter(q => q.status === 'done');
-    const notDone = queue.filter(q => q.status !== 'done');
-    let current: QueueEntry | null = null;
-    let timeLeft = 0;
-    const waiting: Array<QueueEntry & { waitMs: number }> = [];
-    let prevEnd: number | null = null;
-    for (let i = 0; i < notDone.length; i++) {
-      const entry = notDone[i];
-      let entryStart: number = 0;
-      if (entry.startTime && entry.startTime > 0) {
-        entryStart = entry.startTime;
-      } else if (prevEnd !== null) {
-        entryStart = Math.max(new Date(entry.time).getTime(), prevEnd);
-      } else {
-        entryStart = new Date(entry.time).getTime();
-      }
-      const entryEnd: number = entryStart + 25 * 60 * 1000;
-      if (now >= entryStart && now < entryEnd && !current) {
-        current = entry;
-        timeLeft = entryEnd - now;
-        prevEnd = entryEnd;
-      } else if (!current) {
-        prevEnd = entryEnd;
-      } else {
-        waiting.push({ ...entry, waitMs: entryStart - now });
-        prevEnd = entryEnd;
-      }
-    }
-
-    return { current, timeLeft, waiting, done };
-  }, [queue]);
-
-  useEffect(() => {
-    if (current && current.status !== 'playing' && current.status !== 'done') {
-      syncStatuses();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current]);
-
-  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     }
   }, []);
-  const router = useRouter();
 
-  async function handleClearQueue() {
-    const q = await getDocs(collection(db, 'queue'));
-    const batch: Promise<void>[] = [];
-    q.forEach(docSnap => {
-      batch.push(deleteDoc(doc(db, 'queue', docSnap.id)));
-    });
-    await Promise.all(batch);
-    setShowModal(false);
-  }
-
-  const handleDelete = async () => {
-    if (!modalUser) return;
-    setDeleting(true);
-    await deleteDoc(doc(db, 'queue', modalUser.id));
-    setDeleting(false);
-    setModalUser(null);
-    await syncStatuses();
-  };
-
-  const handleDone = async () => {
-    if (!modalUser) return;
-    setFinishing(true);
-    await updateDoc(doc(db, 'queue', modalUser.id), { status: 'done' });
-    setFinishing(false);
-    setModalUser(null);
-    await syncStatuses();
-  };
-
-  // --- Синхронизация статусов с базой раз в минуту (только для админа) ---
+  // Автоматическое продвижение очереди
   useEffect(() => {
-    if (!isAdmin) return;
-    const interval = setInterval(() => {
-      // Синхронизируем статусы только если isAdmin
-      const syncStatuses = async () => {
-        // current
-        if (current && current.status !== 'playing') {
-          await updateDoc(doc(db, 'queue', current.id), { status: 'playing' });
-        }
-        // waiting
-        for (const entry of waiting) {
-          if (entry.status !== 'waiting') {
-            await updateDoc(doc(db, 'queue', entry.id), { status: 'waiting' });
-          }
-        }
-        // done
-        for (const entry of done) {
-          if (entry.status !== 'done') {
-            await updateDoc(doc(db, 'queue', entry.id), { status: 'done' });
-          }
-        }
-      };
-      syncStatuses();
-    }, 60000); // раз в минуту
-    return () => clearInterval(interval);
-  }, [isAdmin, current, waiting, done]);
+    if (!current) {
+      // Если нет playing, назначаем первого waiting как playing и ставим startTime
+      if (waiting.length > 0) {
+        const next = waiting[0];
+        updateDoc(doc(db, 'queue', next.id), {
+          status: 'playing',
+          startTime: Date.now(),
+        });
+      }
+      return;
+    }
+    // Если время вышло, переводим current в done, сбрасываем startTime, следующего waiting в playing (или просто done)
+    if (timeLeft === 0 && current.startTime) {
+      updateDoc(doc(db, 'queue', current.id), { status: 'done', startTime: 0 });
+      if (waiting.length > 0) {
+        const next = waiting[0];
+        updateDoc(doc(db, 'queue', next.id), {
+          status: 'playing',
+          startTime: Date.now(),
+        });
+      }
+      // Теперь current всегда уходит в done, даже если нет waiting
+    }
+  }, [current, timeLeft, waiting]);
 
-  // Перед рендером AdminQueueModal
-  // console.log('RENDER AdminQueueModal', { modalUser, open: !!modalUser });
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -304,7 +248,6 @@ export default function Queue() {
           done={done}
           loading={loading}
           isAdmin={isAdmin}
-          syncStatuses={syncStatuses}
         />
       </div>
       <div className={styles.formBlock}>
@@ -335,7 +278,9 @@ export default function Queue() {
             </button>
           </div>
         </form>
-        <div className={styles.formNote}>*1 напиток ~ 25 минут</div>
+        <div className={styles.formNote}>
+          *1 напиток ~ {platformConfig?.gameDuration ?? 25} минут
+        </div>
       </div>
     </div>
   );

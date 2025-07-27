@@ -30,6 +30,7 @@ export interface PlatformConfig {
   showMenuTab: boolean;
   showInfoTab: boolean;
   showQueueTab: boolean;
+  gameDuration: number;
 }
 
 export async function authorizeAdmin(

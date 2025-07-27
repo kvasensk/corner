@@ -62,6 +62,25 @@
   text-align: center;
 }
 
+.inputGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  position: relative;
+}
+
+.inputHint {
+  position: absolute;
+  top: -15px;
+  left: 0;
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-bottom: 0;
+  margin-left: 2px;
+  pointer-events: none;
+  line-height: 1;
+}
+
 @media (max-width: 500px) {
   .card {
     padding: 16px 4px;

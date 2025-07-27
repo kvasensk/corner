@@ -1,84 +1,20 @@
 import styles from './QueueList.module.css';
 import { QueueEntry } from '../../../../types/queue';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../lib/firebase';
 import AdminQueueModal from '../AdminQueueModal/AdminQueueModal';
-
-interface QueueListProps {
-  queue: QueueEntry[];
-  loading: boolean;
-  startTime: Date | null;
-  now: Date;
-}
-
-function formatTimeLeft(ms: number) {
-  if (ms <= 0) return '0 мин';
-  const min = Math.floor(ms / 60000);
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return h > 0 ? `${h}ч ${m} мин` : `${m} мин`;
-}
-
-function useTimeLeft(startTimeStr: string | null) {
-  const [timeLeft, setTimeLeft] = useState(0);
-  useEffect(() => {
-    if (!startTimeStr) return;
-    const startTime = new Date(startTimeStr);
-    const update = () =>
-      setTimeLeft(25 * 60 * 1000 - (Date.now() - startTime.getTime()));
-    update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
-  }, [startTimeStr]);
-  return timeLeft;
-}
-
-function QueueCard({
-  entry,
-  idx,
-  startTime,
-}: {
-  entry: QueueEntry;
-  idx: number;
-  startTime: Date | null;
-}) {
-  const waitMs =
-    (idx + 1) * 25 * 60 * 1000 -
-    (startTime ? Date.now() - startTime.getTime() : 0);
-  return (
-    <div className={styles.card} key={entry.id}>
-      <div className={styles.cardContent}>
-        <span className={styles.name}>{entry.name}</span>
-        <span className={styles.queueTime}>
-          (
-          {new Date(entry.time).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-          )
-        </span>
-      </div>
-      <span className={styles.timeInfo}>
-        Начало через
-        <span className={styles.timeValue}>~{formatTimeLeft(waitMs)}</span>
-      </span>
-    </div>
-  );
-}
 
 export default function QueueList({
   waiting,
   done,
   loading,
   isAdmin,
-  syncStatuses,
 }: {
-  waiting: Array<QueueEntry & { waitMs: number }>;
+  waiting: QueueEntry[];
   done: QueueEntry[];
   loading: boolean;
   isAdmin?: boolean;
-  syncStatuses: () => Promise<void>;
 }) {
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -90,7 +26,6 @@ export default function QueueList({
     await deleteDoc(doc(db, 'queue', modalUser.id));
     setDeleting(false);
     setModalUser(null);
-    await syncStatuses();
   };
 
   const handleDone = async () => {
@@ -99,7 +34,6 @@ export default function QueueList({
     await updateDoc(doc(db, 'queue', modalUser.id), { status: 'done' });
     setFinishing(false);
     setModalUser(null);
-    await syncStatuses();
   };
 
   if (loading)
@@ -138,12 +72,7 @@ export default function QueueList({
               )}
             </div>
             <div className={styles.wrap}>
-              <span className={styles.timeInfo}>
-                Начало через
-                <span className={styles.timeValue}>
-                  ~{formatTimeLeft(entry.waitMs)}
-                </span>
-              </span>
+              <span className={styles.timeInfo}>В очереди</span>
               {isAdmin && (
                 <button
                   className={styles.adminMenuBtn}
@@ -182,22 +111,6 @@ export default function QueueList({
                 })}
                 )
               </span>
-              {/* {isAdmin && (
-                <button
-                  className={styles.adminMenuBtn}
-                  onClick={e => {
-                    e.stopPropagation();
-                    setModalUser(entry);
-                  }}
-                  onTouchStart={e => {
-                    e.stopPropagation();
-                    setModalUser(entry);
-                  }}
-                  title='Управление'
-                >
-                  &#8942;
-                </button>
-              )} */}
               {isAdmin && (
                 <span className={styles.statusTag}>
                   {entry.status === 'playing' && 'Играет'}
