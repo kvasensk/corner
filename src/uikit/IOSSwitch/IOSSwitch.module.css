@@ -1,0 +1,54 @@
+.root {
+  display: inline-block;
+  position: relative;
+  width: 44px;
+  height: 26px;
+  vertical-align: middle;
+}
+.input {
+  opacity: 0;
+  width: 44px;
+  height: 26px;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+.input:disabled {
+  cursor: not-allowed;
+}
+.track {
+  display: block;
+  width: 44px;
+  height: 26px;
+  border-radius: 16px;
+  background: #eee;
+  box-shadow: 0 0 0 1px #ccc;
+  transition: background 0.2s;
+}
+.trackChecked {
+  background: #e75480;
+  box-shadow: 0 0 0 2px #ffb6d5;
+}
+.thumb {
+  display: block;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px #e7548033;
+  transition: left 0.2s;
+  border: 2px solid #ccc;
+}
+.thumbChecked {
+  left: 22px;
+  border: 2px solid #fd1d86;
+}
+.disabled {
+  opacity: 0.5;
+} 

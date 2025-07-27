@@ -1,0 +1,74 @@
+.card {
+  background: #f5f5f5;
+  padding: 32px 32px;
+  max-width: 400px;
+  margin: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.title {
+  color: #e75480;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: 1.1rem;
+  color: #171717;
+}
+
+.labelGray {
+  color: #bbb;
+  font-size: 1.1rem;
+}
+
+.saving {
+  color: #7c1fa0;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.errorMsg {
+  color: #fd1d86;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.loading {
+  color: #7c1fa0;
+  padding: 32px;
+  text-align: center;
+}
+
+.error {
+  color: #fd1d86;
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  .card {
+    padding: 16px 4px;
+    max-width: 98vw;
+  }
+  .title {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+} 
