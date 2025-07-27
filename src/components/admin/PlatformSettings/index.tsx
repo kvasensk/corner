@@ -144,7 +144,7 @@ export default function PlatformSettings() {
               }
               onClick={handleSaveDuration}
               success={saved}
-              disabled={durationDraft === config.gameDuration || saving}
+              disabled={Number(durationDraft) === config.gameDuration || saving}
               aria-label='Сохранить время игры'
             />
           </div>
