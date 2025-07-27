@@ -16,8 +16,6 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<'platform' | 'menu' | 'info'>(
     'platform'
   );
-  const [platformConfig, setPlatformConfigState] =
-    useState<PlatformConfig | null>(null);
   const isAdmin = true;
   const router = useRouter();
 
@@ -27,9 +25,6 @@ export default function AdminPage() {
         setIsAuth(true);
       }
     }
-    fetch('/api/platformConfig')
-      .then(res => res.json())
-      .then(setPlatformConfigState);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

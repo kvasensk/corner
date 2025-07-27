@@ -3,6 +3,7 @@ import IOSSwitch from '../../../uikit/IOSSwitch';
 import NumberInput from '../../../uikit/NumberInput';
 import IconButton from '../../../uikit/IconButton';
 import styles from './PlatformSettings.module.css';
+import { usePlatformConfig } from '../../../lib/PlatformConfigContext';
 
 export type PlatformConfig = {
   showMenuTab: boolean;
@@ -12,31 +13,22 @@ export type PlatformConfig = {
 };
 
 export default function PlatformSettings() {
-  const [config, setConfig] = useState<PlatformConfig | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { config, setConfig, loading, error } = usePlatformConfig();
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
   const [durationDraft, setDurationDraft] = useState<string>('');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    fetch('/api/platformConfig')
-      .then(res => res.json())
-      .then(cfg => {
-        setConfig(cfg);
-        setDurationDraft(cfg.gameDuration.toString());
-      })
-      .catch(() => setError('Ошибка загрузки настроек'))
-      .finally(() => setLoading(false));
-  }, []);
+    if (config) {
+      setDurationDraft(config.gameDuration.toString());
+    }
+  }, [config]);
 
   const handleChange = (field: keyof PlatformConfig) => async () => {
     if (!config) return;
     const newConfig = { ...config, [field]: !config[field] };
     setConfig(newConfig);
     setSaving(true);
-    setError('');
     try {
       const res = await fetch('/api/platformConfig', {
         method: 'POST',
@@ -45,7 +37,7 @@ export default function PlatformSettings() {
       });
       if (!res.ok) throw new Error();
     } catch {
-      setError('Ошибка сохранения');
+      // setError('Ошибка сохранения'); // This line was removed
     } finally {
       setSaving(false);
     }
@@ -54,7 +46,6 @@ export default function PlatformSettings() {
   const handleSaveDuration = async () => {
     if (!config || durationDraft === '') return;
     setSaving(true);
-    setError('');
     try {
       let num = Number(durationDraft);
       if (isNaN(num)) num = config.gameDuration;
@@ -71,7 +62,7 @@ export default function PlatformSettings() {
       setTimeout(() => setSaved(false), 1500);
       setDurationDraft(num.toString());
     } catch {
-      setError('Ошибка сохранения');
+      // setError('Ошибка сохранения'); // This line was removed
     } finally {
       setSaving(false);
     }

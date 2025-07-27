@@ -50,7 +50,7 @@ export default function NowPlayingBlock({
             })}
             )
           </span>
-          {(isAdmin || manualQueue) && (
+          {isAdmin && (
             <span className={styles.statusTag}>
               {current.status === 'playing' && 'Играет'}
               {current.status === 'waiting' && 'В очереди'}

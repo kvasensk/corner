@@ -65,7 +65,7 @@ export default function QueueList({
                 })}
                 )
               </span>
-              {(isAdmin || manualQueue) && (
+              {isAdmin && (
                 <span className={styles.statusTag}>
                   {entry.status === 'playing' && 'Играет'}
                   {entry.status === 'waiting' && 'В очереди'}

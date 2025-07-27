@@ -3,9 +3,9 @@ import '../src/styles/globals.css';
 import styles from './page.module.css';
 import { Quicksand } from 'next/font/google';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { getPlatformConfig, PlatformConfig } from '../src/lib/firebase';
 import Loader from '../src/uikit/Loader';
+import { PlatformConfigProvider } from '../src/lib/PlatformConfigContext';
 
 const quicksand = Quicksand({
   subsets: ['latin'],
@@ -13,7 +13,6 @@ const quicksand = Quicksand({
 });
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter();
   const phrases = [
     'Оттягиваем кий...',
     'Натираем мелом...',
@@ -43,17 +42,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   if (!config) return <Loader text={phrases[phraseIdx]} />;
 
-  if (router.pathname.startsWith('/admin')) {
-    return (
+  return (
+    <PlatformConfigProvider>
       <main className={quicksand.className}>
         <Component {...pageProps} />
       </main>
-    );
-  }
-
-  return (
-    <main className={quicksand.className}>
-      <Component {...pageProps} />
-    </main>
+    </PlatformConfigProvider>
   );
 }

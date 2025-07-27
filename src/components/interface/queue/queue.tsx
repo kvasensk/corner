@@ -19,7 +19,8 @@ import NowPlayingBlock from './NowPlaying/NowPlayingBlock';
 import { QueueEntry } from '../../../types/queue';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { getPlatformConfig, PlatformConfig } from '../../../lib/firebase';
+import { usePlatformConfig } from '../../../lib/PlatformConfigContext';
+import type { PlatformConfig } from '../../../lib/firebase';
 import AdminQueueModal from './AdminQueueModal/AdminQueueModal';
 
 export default function Queue() {
@@ -30,9 +31,8 @@ export default function Queue() {
   const [now, setNow] = useState(Date.now());
   const [showModal, setShowModal] = useState(false);
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
-  const [platformConfig, setPlatformConfig] = useState<PlatformConfig | null>(
-    null
-  );
+  const { config: platformConfig, loading: configLoading } =
+    usePlatformConfig();
   const [deleting, setDeleting] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -89,6 +89,7 @@ export default function Queue() {
   };
 
   const manualQueue = !!platformConfig?.manualQueue;
+  const gameDuration = platformConfig?.gameDuration || 25;
 
   // Основная логика очереди
   const { current, timeLeft, waiting, done } = useMemo(() => {
@@ -138,7 +139,7 @@ export default function Queue() {
   }, []);
 
   useEffect(() => {
-    getPlatformConfig().then(setPlatformConfig);
+    // getPlatformConfig().then(setPlatformConfig); // Удалено
   }, []);
 
   useEffect(() => {
