@@ -8,6 +8,7 @@ export type PlatformConfig = {
   showMenuTab: boolean;
   showInfoTab: boolean;
   gameDuration: number; // в минутах
+  manualQueue: boolean;
 };
 
 export default function PlatformSettings() {
@@ -106,6 +107,14 @@ export default function PlatformSettings() {
           />
         </div>
         <div className={styles.settingRow}>
+          <span className={styles.label}>Ручное управление очередью</span>
+          <IOSSwitch
+            checked={config.manualQueue}
+            onChange={handleChange('manualQueue')}
+            disabled={saving}
+          />
+        </div>
+        <div className={styles.settingRow}>
           <span className={styles.label}>Время игры (мин):</span>
           <div className={styles.inputGroup}>
             <div className={styles.inputHint}>от 5 до 60 минут</div>
@@ -114,7 +123,7 @@ export default function PlatformSettings() {
               min={5}
               max={60}
               onChange={v => setDurationDraft(v.replace(/[^\d]/g, ''))}
-              disabled={saving}
+              disabled={saving || config.manualQueue}
             />
             <IconButton
               icon={
@@ -144,11 +153,23 @@ export default function PlatformSettings() {
               }
               onClick={handleSaveDuration}
               success={saved}
-              disabled={Number(durationDraft) === config.gameDuration || saving}
+              disabled={
+                Number(durationDraft) === config.gameDuration ||
+                saving ||
+                config.manualQueue
+              }
               aria-label='Сохранить время игры'
             />
           </div>
         </div>
+        {config.manualQueue && (
+          <div
+            className={styles.inputHint}
+            style={{ color: '#e75480', marginTop: 4 }}
+          >
+            Время игры отключено в ручном режиме
+          </div>
+        )}
       </div>
       {saving && <div className={styles.saving}>Сохраняем...</div>}
       {error && <div className={styles.errorMsg}>{error}</div>}

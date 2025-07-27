@@ -88,6 +88,8 @@ export default function Queue() {
     setName('');
   };
 
+  const manualQueue = !!platformConfig?.manualQueue;
+
   // Основная логика очереди
   const { current, timeLeft, waiting, done } = useMemo(() => {
     const nowMs = now;
@@ -99,14 +101,15 @@ export default function Queue() {
       .filter(q => q.status === 'done')
       .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
     const current = playing || null;
-    let timeLeft = 0;
     // Используем gameDuration из platformConfig, если есть
     const duration =
       platformConfig && (platformConfig as PlatformConfig).gameDuration
         ? (platformConfig as PlatformConfig).gameDuration
         : 25;
     const GAME_DURATION = duration * 60 * 1000;
-    if (current && current.startTime) {
+    // Если ручной режим — не считаем таймеры
+    let timeLeft = 0;
+    if (!manualQueue && current && current.startTime) {
       timeLeft = GAME_DURATION - (nowMs - current.startTime);
       if (timeLeft < 0) timeLeft = 0;
     }
@@ -146,8 +149,8 @@ export default function Queue() {
 
   // Автоматическое продвижение очереди
   useEffect(() => {
+    if (manualQueue) return; // Отключаем авто-логику в ручном режиме
     if (!current) {
-      // Если нет playing, назначаем первого waiting как playing и ставим startTime
       if (waiting.length > 0) {
         const next = waiting[0];
         updateDoc(doc(db, 'queue', next.id), {
@@ -157,7 +160,6 @@ export default function Queue() {
       }
       return;
     }
-    // Если время вышло, переводим current в done, сбрасываем startTime, следующего waiting в playing (или просто done)
     if (timeLeft === 0 && current.startTime) {
       updateDoc(doc(db, 'queue', current.id), { status: 'done', startTime: 0 });
       if (waiting.length > 0) {
@@ -167,9 +169,20 @@ export default function Queue() {
           startTime: Date.now(),
         });
       }
-      // Теперь current всегда уходит в done, даже если нет waiting
     }
-  }, [current, timeLeft, waiting]);
+  }, [manualQueue, current, timeLeft, waiting]);
+
+  // Фикс: при выключении ручного режима реактивировать playing
+  useEffect(() => {
+    if (!manualQueue && !current && waiting.length > 0) {
+      const next = waiting[0];
+      updateDoc(doc(db, 'queue', next.id), {
+        status: 'playing',
+        startTime: Date.now(),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manualQueue]);
 
   return (
     <div className={styles.page}>
@@ -237,6 +250,7 @@ export default function Queue() {
             current={current}
             timeLeft={timeLeft}
             isAdmin={isAdmin}
+            manualQueue={manualQueue}
             onAdminMenuClick={() => setModalUser(current)}
           />
         )}
@@ -248,6 +262,7 @@ export default function Queue() {
           done={done}
           loading={loading}
           isAdmin={isAdmin}
+          manualQueue={manualQueue}
         />
       </div>
       <div className={styles.formBlock}>

@@ -10,11 +10,13 @@ export default function QueueList({
   done,
   loading,
   isAdmin,
+  manualQueue = false,
 }: {
   waiting: QueueEntry[];
   done: QueueEntry[];
   loading: boolean;
   isAdmin?: boolean;
+  manualQueue?: boolean;
 }) {
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -63,7 +65,7 @@ export default function QueueList({
                 })}
                 )
               </span>
-              {isAdmin && (
+              {(isAdmin || manualQueue) && (
                 <span className={styles.statusTag}>
                   {entry.status === 'playing' && 'Играет'}
                   {entry.status === 'waiting' && 'В очереди'}
@@ -72,8 +74,10 @@ export default function QueueList({
               )}
             </div>
             <div className={styles.wrap}>
-              <span className={styles.timeInfo}>В очереди</span>
-              {isAdmin && (
+              {!manualQueue && (
+                <span className={styles.timeInfo}>В очереди</span>
+              )}
+              {(isAdmin || manualQueue) && (
                 <button
                   className={styles.adminMenuBtn}
                   onClick={e => {
@@ -111,7 +115,7 @@ export default function QueueList({
                 })}
                 )
               </span>
-              {isAdmin && (
+              {(isAdmin || manualQueue) && (
                 <span className={styles.statusTag}>
                   {entry.status === 'playing' && 'Играет'}
                   {entry.status === 'waiting' && 'В очереди'}
@@ -119,7 +123,7 @@ export default function QueueList({
                 </span>
               )}
             </div>
-            <span className={styles.timeInfo}>Сыграл</span>
+            {!manualQueue && <span className={styles.timeInfo}>Сыграл</span>}
           </div>
         ))}
       </div>

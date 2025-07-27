@@ -13,11 +13,13 @@ export default function NowPlayingBlock({
   current,
   timeLeft,
   isAdmin,
+  manualQueue,
   onAdminMenuClick,
 }: {
   current: QueueEntry;
   timeLeft: number;
   isAdmin?: boolean;
+  manualQueue?: boolean;
   onAdminMenuClick?: () => void;
 }) {
   const total = 25;
@@ -48,7 +50,7 @@ export default function NowPlayingBlock({
             })}
             )
           </span>
-          {isAdmin && (
+          {(isAdmin || manualQueue) && (
             <span className={styles.statusTag}>
               {current.status === 'playing' && 'Играет'}
               {current.status === 'waiting' && 'В очереди'}
@@ -57,13 +59,15 @@ export default function NowPlayingBlock({
           )}
         </div>
         <div className={styles.wrap}>
-          <span className={styles.timeInfo}>
-            Осталось играть
-            <span className={styles.timeValue}>
-              ~{formatTimeLeft(timeLeft)}
+          {!manualQueue && (
+            <span className={styles.timeInfo}>
+              Осталось играть
+              <span className={styles.timeValue}>
+                ~{formatTimeLeft(timeLeft)}
+              </span>
             </span>
-          </span>
-          {isAdmin && (
+          )}
+          {(isAdmin || manualQueue) && (
             <button
               className={styles.adminMenuBtn}
               onClick={e => {
