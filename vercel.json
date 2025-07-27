@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/advanceQueue",
-      "schedule": "*/1 * * * *"
-    }
-  ]
-} 

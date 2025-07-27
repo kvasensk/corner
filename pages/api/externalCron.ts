@@ -16,14 +16,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // Проверяем секретный ключ для безопасности
+  const authHeader = req.headers.authorization;
+  if (authHeader !== `Bearer ${process.env.EXTERNAL_CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const startTime = Date.now();
-  console.log(`[${new Date().toISOString()}] Queue advancement started`);
-
   try {
+    console.log(
+      `[${new Date().toISOString()}] External cron: Queue advancement started`
+    );
+
     // Получаем настройки платформы
     const configDoc = await getDoc(doc(db, 'config', 'platform'));
     const platformConfig = configDoc.exists()
@@ -33,7 +36,7 @@ export default async function handler(
     // Проверяем ручной режим
     if (platformConfig?.manualQueue) {
       console.log(
-        `[${new Date().toISOString()}] Manual queue mode - no advancement`
+        `[${new Date().toISOString()}] External cron: Manual queue mode - no advancement`
       );
       return res
         .status(200)
@@ -51,13 +54,15 @@ export default async function handler(
     const currentTime = Date.now();
 
     console.log(
-      `[${new Date().toISOString()}] Processing ${allEntries.length} entries`
+      `[${new Date().toISOString()}] External cron: Processing ${
+        allEntries.length
+      } entries`
     );
 
     // Продвигаем очередь до тех пор, пока не найдем активного игрока
     let shouldContinue = true;
     let iterations = 0;
-    const maxIterations = 10; // Защита от бесконечного цикла
+    const maxIterations = 10;
     let changesMade = 0;
 
     while (shouldContinue && iterations < maxIterations) {
@@ -79,7 +84,9 @@ export default async function handler(
         });
 
         console.log(
-          `[${new Date().toISOString()}] Started player: ${next.name}`
+          `[${new Date().toISOString()}] External cron: Started player: ${
+            next.name
+          }`
         );
 
         // Обновляем локальную копию
@@ -104,7 +111,7 @@ export default async function handler(
           });
 
           console.log(
-            `[${new Date().toISOString()}] Finished player: ${
+            `[${new Date().toISOString()}] External cron: Finished player: ${
               playing.name
             } (${Math.round(elapsed / 60000)}min played)`
           );
@@ -125,7 +132,9 @@ export default async function handler(
             });
 
             console.log(
-              `[${new Date().toISOString()}] Started next player: ${next.name}`
+              `[${new Date().toISOString()}] External cron: Started next player: ${
+                next.name
+              }`
             );
 
             // Обновляем локальную копию
@@ -137,42 +146,41 @@ export default async function handler(
             changesMade++;
             continue;
           } else {
-            // Нет больше ожидающих, останавливаем цикл
             shouldContinue = false;
           }
         } else {
-          // Играющий еще не закончил, останавливаем цикл
           shouldContinue = false;
         }
       } else {
-        // Нет играющего и нет ожидающих, останавливаем цикл
         shouldContinue = false;
       }
     }
 
     if (iterations >= maxIterations) {
       console.warn(
-        `[${new Date().toISOString()}] Queue advancement stopped after max iterations`
+        `[${new Date().toISOString()}] External cron: Queue advancement stopped after max iterations`
       );
     }
 
-    const executionTime = Date.now() - startTime;
     console.log(
-      `[${new Date().toISOString()}] Queue advancement completed in ${executionTime}ms, changes: ${changesMade}`
+      `[${new Date().toISOString()}] External cron: Queue advancement completed, changes: ${changesMade}`
     );
 
     return res.status(200).json({
-      message: 'Queue advanced successfully',
+      message: 'External cron executed successfully',
       changesMade,
       iterations,
       currentTime,
-      executionTime,
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error(
-      `[${new Date().toISOString()}] Error advancing queue:`,
+      `[${new Date().toISOString()}] External cron: Error advancing queue:`,
       error
     );
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      timestamp: new Date().toISOString(),
+    });
   }
 }

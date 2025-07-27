@@ -24,16 +24,16 @@ export default function AdminBurgerMenu({
   const router = useRouter();
 
   const tabs: Tab[] = [
-    { label: 'Настройки платформы', id: 'platform' },
-    { label: 'Настройки меню', id: 'menu' },
-    { label: 'Настройки инфо', id: 'info' },
+    { label: 'PLATFORM SETTINGS', id: 'platform' },
+    { label: 'MENU SETTINGS', id: 'menu' },
+    { label: 'INFO SETTINGS', id: 'info' },
   ];
 
   return (
     <>
       <button
         className={styles.burger}
-        aria-label='Открыть меню администратора'
+        aria-label='Open admin menu'
         onClick={() => setOpen(!open)}
       >
         <span className={styles.burgerLine} />
@@ -41,6 +41,10 @@ export default function AdminBurgerMenu({
         <span className={styles.burgerLine} />
       </button>
       <nav className={open ? styles.menuOpen : styles.menuClosed}>
+        <div className={styles.terminalHeader}>
+          <span className={styles.terminalTitle}>ADMIN TERMINAL</span>
+          <span className={styles.terminalStatus}>ONLINE</span>
+        </div>
         <ul className={styles.tabList}>
           {tabs.map(tab => (
             <li key={tab.id}>
@@ -51,29 +55,34 @@ export default function AdminBurgerMenu({
                   setOpen(false);
                 }}
               >
+                <span className={styles.tabPrefix}>$</span>
                 {tab.label}
               </button>
             </li>
           ))}
         </ul>
-        <button
-          className={styles.adminBtnMain}
-          onClick={() => {
-            router.push('/');
-            setOpen(false);
-          }}
-        >
-          На главную
-        </button>
-        <button
-          className={styles.adminBtnLogout}
-          onClick={() => {
-            if (onLogout) onLogout();
-            setOpen(false);
-          }}
-        >
-          Выйти
-        </button>
+        <div className={styles.commandSection}>
+          <button
+            className={styles.adminBtnMain}
+            onClick={() => {
+              router.push('/');
+              setOpen(false);
+            }}
+          >
+            <span className={styles.commandPrefix}>{'>'}</span>
+            GO TO MAIN
+          </button>
+          <button
+            className={styles.adminBtnLogout}
+            onClick={() => {
+              if (onLogout) onLogout();
+              setOpen(false);
+            }}
+          >
+            <span className={styles.commandPrefix}>!</span>
+            LOGOUT
+          </button>
+        </div>
       </nav>
       {open && (
         <div className={styles.overlay} onClick={() => setOpen(false)} />

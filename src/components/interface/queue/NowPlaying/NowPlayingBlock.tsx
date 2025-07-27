@@ -14,16 +14,23 @@ export default function NowPlayingBlock({
   timeLeft,
   isAdmin,
   manualQueue,
+  gameDuration = 25,
   onAdminMenuClick,
 }: {
   current: QueueEntry;
   timeLeft: number;
   isAdmin?: boolean;
   manualQueue?: boolean;
+  gameDuration?: number;
   onAdminMenuClick?: () => void;
 }) {
-  const total = 25;
-  const played = Math.floor((1 - timeLeft / (25 * 60 * 1000)) * total);
+  // В ручном режиме показываем сплошной фон (одно деление)
+  const total = manualQueue ? 1 : gameDuration;
+  const totalTime = gameDuration * 60 * 1000;
+  const played = manualQueue
+    ? 1
+    : Math.floor((1 - timeLeft / totalTime) * total);
+
   return (
     <div className={styles.nowPlayingBlock}>
       <div className={styles.label}>Играет сейчас:</div>

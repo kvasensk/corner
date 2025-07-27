@@ -1,93 +1,248 @@
-.card {
-  background: #f5f5f5;
-  padding: 32px 32px;
-  max-width: 400px;
-  margin: 80px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+/* Хакерский стиль для PlatformSettings */
+.container {
+  background: #000000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  padding: 30px;
+  max-width: 500px;
+  margin: 20px auto;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  color: #00ff00;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.3),
+    inset 0 0 20px rgba(0, 255, 0, 0.1);
+  position: relative;
 }
 
-.title {
-  color: #e75480;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 32px;
-  text-align: center;
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 98%, #00ff00 100%),
+    linear-gradient(0deg, transparent 98%, #00ff00 100%);
+  background-size: 20px 20px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.terminalHeader {
+  padding: 24px 0;
+  border-bottom: 1px solid #00ff00;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 8px;
+}
+
+.terminalTitle {
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 0 8px #00ff00;
+  letter-spacing: 2px;
+}
+
+.terminalStatus {
+  font-size: 12px;
+  color: #00ff00;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
 }
 
 .settingsList {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .settingRow {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+  gap: 20px;
+  min-height: 50px;
 }
 
 .label {
-  font-size: 1.1rem;
-  color: #171717;
+  font-size: 14px;
+  color: #00ff00;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #00ff00;
+  width: 35%;
+  flex-shrink: 0;
 }
 
-.labelGray {
-  color: #bbb;
-  font-size: 1.1rem;
+.labelDisabled {
+  color: #00aa00;
+  font-size: 14px;
+  opacity: 0.6;
+  font-weight: bold;
+  letter-spacing: 1px;
+  width: 35%;
+  flex-shrink: 0;
+}
+
+.switchContainer,
+.statusContainer {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.statusText {
+  font-size: 12px;
+  color: #00ff00;
+  font-weight: bold;
+  letter-spacing: 1px;
+  min-width: 80px;
+  text-align: right;
+}
+
+.statusIndicator {
+  font-size: 14px;
+  min-width: 20px;
+  text-align: center;
 }
 
 .saving {
-  color: #7c1fa0;
-  margin-top: 16px;
+  color: #00ff00;
+  margin-top: 20px;
   text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  animation: blink 1s infinite;
 }
 
 .errorMsg {
-  color: #fd1d86;
-  margin-top: 16px;
+  color: #ff0000;
+  margin-top: 20px;
   text-align: center;
-}
-
-.loading {
-  color: #7c1fa0;
-  padding: 32px;
-  text-align: center;
-}
-
-.error {
-  color: #fd1d86;
-  padding: 32px;
-  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 10px;
+  border: 1px solid #ff0000;
+  background: rgba(255, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
 }
 
 .inputGroup {
   display: flex;
-  align-items: flex-end;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   position: relative;
+  width: 35%;
+  justify-content: flex-end;
+}
+
+.inputGroupDisabled {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  width: 35%;
+  justify-content: flex-end;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .inputHint {
   position: absolute;
-  top: -15px;
+  top: -20px;
   left: 0;
-  font-size: 0.7rem;
-  color: #aaa;
-  margin-bottom: 0;
-  margin-left: 2px;
+  font-size: 10px;
+  color: #00aa00;
   pointer-events: none;
-  line-height: 1;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
-@media (max-width: 500px) {
-  .card {
-    padding: 16px 4px;
-    max-width: 98vw;
+.inputHintDisabled {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-size: 10px;
+  color: #006600;
+  pointer-events: none;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.warningMsg {
+  color: #ff0000;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ff0000;
+  background: rgba(255, 0, 0, 0.1);
+  margin-top: 10px;
+  letter-spacing: 1px;
+  animation: errorGlow 2s ease-in-out infinite;
+}
+
+@keyframes errorGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .container {
+    margin: 10px;
+    padding: 20px;
   }
-  .title {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
+  
+  .terminalTitle {
+    font-size: 16px;
+  }
+  
+  .label {
+    font-size: 12px;
+    width: 40%;
+  }
+  
+  .labelDisabled {
+    font-size: 12px;
+    width: 40%;
+  }
+  
+  .settingRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; 
+   
+    min-height: auto;
+  }
+  
+  .switchContainer,
+  .statusContainer {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .inputGroup,
+  .inputGroupDisabled {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .statusText {
+    min-width: 60px;
+    font-size: 11px;
   }
 } 

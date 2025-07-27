@@ -266,6 +266,7 @@ export default function Queue() {
             timeLeft={timeLeft}
             isAdmin={isAdmin}
             manualQueue={manualQueue}
+            gameDuration={platformConfig?.gameDuration || 25}
             onAdminMenuClick={() => setModalUser(current)}
           />
         )}

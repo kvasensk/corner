@@ -154,7 +154,7 @@
 .input {
   flex: 1;
   padding: 11px 10px;
-  font-size: 15px;
+  font-size: 16px; /* Увеличиваем размер шрифта для предотвращения зума */
   border-radius: 8px 0 0 8px;
   border: none;
   outline: none;
@@ -164,6 +164,12 @@
   font-family: inherit;
   height: 38px;
   box-sizing: border-box;
+  /* Предотвращаем зум на iOS */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Отключаем автозум на iOS */
+  transform: translateZ(0);
 }
 .button {
   background: #ffd600;
@@ -307,31 +313,45 @@
 
 @media (max-width: 600px) {
   .header {
+    padding: 0px 12px 0px 12px;
+    margin-top: env(safe-area-inset-top, 0px); /* Учитываем безопасную зону */
+  }
 
-    gap: 0;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
   .logo {
-    padding-left: 10px;
+    width: 50%;
   }
+
   .logoFont {
-    font-size: 32px;
+    font-size: 18px !important;
   }
+
   .logoSub {
-    font-size: 13px;
+    font-size: 12.5px !important;
   }
+
   .menu {
-    gap: 18px;
+    width: 50%;
   }
+
   .notch {
-    width: 80px;
-    height: 22px;
-    border-radius: 0 0 18px 18px;
+    width: 120px;
+    height: 32px;
   }
+
   .main {
     margin-top: 28px;
+    /* Учитываем безопасную зону снизу */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Дополнительные стили для предотвращения проблем с виртуальной клавиатурой */
+  .formBlock {
+    position: relative;
+    z-index: 10;
+  }
+
+  .input {
+    font-size: 16px; /* Минимальный размер для предотвращения зума */
   }
 }
 

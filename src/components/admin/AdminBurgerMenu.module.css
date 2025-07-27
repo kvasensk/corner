@@ -1,167 +1,218 @@
+/* Хакерский стиль для админ бургер меню */
 .burger {
   position: fixed;
-  top: 24px;
-  left: 24px;
-  z-index: 2002;
-  width: 44px;
-  height: 44px;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #000000;
+  border: 2px solid #00ff00;
+  border-radius: 0;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #fff;
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px #b0306022;
-  cursor: pointer;
-  transition: box-shadow 0.2s;
+  gap: 4px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  transition: all 0.3s ease;
 }
+
 .burger:hover {
-  box-shadow: 0 4px 24px #b0306044;
+  background: #001100;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  transform: scale(1.05);
 }
+
 .burgerLine {
-  width: 28px;
-  height: 4px;
-  background: #e75480;
-  border-radius: 2px;
-  margin: 3px 0;
-  transition: background 0.2s;
+  width: 25px;
+  height: 2px;
+  background: #00ff00;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
-.menuOpen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 180px;
-  height: 100vh;
-  background: #fff;
-  box-shadow: 2px 0 24px #b0306022;
-  z-index: 2001;
-  display: flex;
-  flex-direction: column;
-  padding-top: 80px;
-  transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.2s;
-  transform: translateX(0);
+
+.burger:hover .burgerLine {
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
 }
+
+.menuOpen,
 .menuClosed {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 180px;
+  right: 0;
+  width: 300px;
   height: 100vh;
-  background: #fff;
-  box-shadow: 2px 0 24px #b0306022;
-  z-index: 2001;
-  display: flex;
-  flex-direction: column;
-  padding-top: 80px;
-  transform: translateX(-110%);
-  transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.2s;
+  background: #000000;
+  border-left: 2px solid #00ff00;
+  z-index: 999;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  color: #00ff00;
+  box-shadow: -5px 0 20px rgba(0, 255, 0, 0.3);
+  transition: transform 0.3s ease;
 }
+
+.menuClosed {
+  transform: translateX(100%);
+}
+
+.menuOpen {
+  transform: translateX(0);
+}
+
+.terminalHeader {
+  padding: 20px;
+  border-bottom: 1px solid #00ff00;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 20, 0, 0.3);
+}
+
+.terminalTitle {
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00ff00;
+  letter-spacing: 1px;
+}
+
+.terminalStatus {
+  font-size: 12px;
+  color: #00ff00;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
 .tabList {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
-.tab {
-  background: none;
-  border: none;
-  color: #7c1fa0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding: 10px 18px 10px 18px;
-  border-radius: 8px;
-  text-align: left;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, font-weight 0.2s;
-  position: relative;
+
+.tabList li {
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
 }
-.tab:hover {
-  background: #ffb6d5;
-  color: #e75480;
-}
+
+.tab,
 .tabActive {
-  color: #fd1d86;
-  font-weight: 700;
+  width: 100%;
+  padding: 15px 20px;
   background: transparent;
   border: none;
-  padding-left: 18px;
+  color: #00ff00;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.tabPrefix {
+  color: #00aa00;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.tabActive {
+  background: rgba(0, 255, 0, 0.15);
+  box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3);
+  border-left: 3px solid #00ff00;
+}
+
+.commandSection {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  border-top: 1px solid #00ff00;
+  background: rgba(0, 20, 0, 0.3);
+}
+
+.adminBtnMain,
+.adminBtnLogout {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  background: #000000;
+  border: 1px solid #00ff00;
+  border-radius: 0;
+  color: #00ff00;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.commandPrefix {
+  color: #00aa00;
+  font-weight: bold;
+}
+
+.adminBtnMain:hover {
+  background: #001100;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  transform: translateX(5px);
+}
+
+.adminBtnLogout {
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+.adminBtnLogout:hover {
+  background: #110000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+  transform: translateX(5px);
+}
+
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #0003;
-  z-index: 2000;
-  animation: fadeIn 0.2s;
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
 }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+
+/* Адаптивность */
 @media (max-width: 600px) {
-  .menuOpen, .menuClosed {
-    width: 70vw;
-    min-width: 120px;
-    padding-top: 64px;
+  .menuOpen,
+  .menuClosed {
+    width: 280px;
   }
-  .burger {
-    top: 12px;
-    left: 12px;
-    width: 38px;
-    height: 38px;
+  
+  .terminalTitle {
+    font-size: 12px;
   }
-  .burgerLine {
-    width: 22px;
-    height: 3px;
+  
+  .tab,
+  .tabActive {
+    font-size: 12px;
+    padding: 12px 15px;
   }
-  .tab {
-    font-size: 1rem;
-    padding: 8px 12px;
+  
+  .adminBtnMain,
+  .adminBtnLogout {
+    font-size: 11px;
+    padding: 10px 12px;
   }
-}
-
-.adminWarning {
-  color: #fd1d86;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 12px 16px;
-  text-align: center;
-}
-
-.adminBtnMain {
-  margin-top: 32px;
-  width: 90%;
-  margin-left: 5%;
-  background: #ffb6d5;
-  color: #e75480;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #e7548033;
-  transition: background 0.2s;
-}
-
-.adminBtnLogout {
-  margin-top: 16px;
-  width: 90%;
-  margin-left: 5%;
-  background: #fff0f6;
-  color: #e75480;
-  border: 1px solid #ffb6d5;
-  border-radius: 8px;
-  padding: 12px 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #e7548033;
-  transition: background 0.2s;
 } 

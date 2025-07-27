@@ -31,6 +31,15 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Хакерский звуковой эффект (опционально)
+    if (typeof window !== 'undefined') {
+      // Можно добавить звук терминала или убрать совсем
+      // const audio = new Audio('terminal-beep.mp3');
+      // audio.volume = 0.3;
+      // audio.play().catch(() => {});
+    }
+
     try {
       const res = await fetch('/api/authorizeAdmin', {
         method: 'POST',
@@ -85,30 +94,55 @@ export default function AdminPage() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.title}>Вход для администратора</h2>
-      <input
-        type='text'
-        placeholder='Логин'
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-        className={styles.input}
-        autoFocus
-      />
-      <input
-        type='password'
-        placeholder='Пароль'
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        className={styles.input}
-      />
-      <button
-        type='submit'
-        disabled={loading || !username || !password}
-        className={styles.button}
-      >
-        {loading ? 'Вход...' : 'Войти'}
-      </button>
-      {error && <div className={styles.errorMsg}>{error}</div>}
+      <div className={styles.loginContainer}>
+        {/* Пиксельная надпись Corner Web */}
+        <div className={styles.hackerLogo}>
+          <pre className={styles.asciiArt}>
+            {` ██████╗ ██████╗ ██████╗ ███╗   ██╗███████╗██████╗ 
+██╔════╝██╔═══██╗██╔══██╗████╗  ██║██╔════╝██╔══██╗
+██║     ██║   ██║██████╔╝██╔██╗ ██║█████╗  ██████╔╝
+██║     ██║   ██║██╔══██╗██║╚██╗██║██╔══╝  ██╔══██╗
+╚██████╗╚██████╔╝██║  ██║██║ ╚████║███████╗██║  ██║
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝`}
+          </pre>
+          <div className={styles.webText}>WEB</div>
+        </div>
+
+        <h2 className={styles.title}>ADMIN ACCESS</h2>
+
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>LOGIN:</label>
+          <input
+            type='text'
+            placeholder='Enter username'
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            className={styles.input}
+            autoFocus
+          />
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>PASSWORD:</label>
+          <input
+            type='password'
+            placeholder='Enter password'
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className={styles.input}
+          />
+        </div>
+
+        <button
+          type='submit'
+          disabled={loading || !username || !password}
+          className={styles.button}
+        >
+          {loading ? 'AUTHENTICATING...' : 'LOGIN'}
+        </button>
+
+        {error && <div className={styles.errorMsg}>{error}</div>}
+      </div>
     </form>
   );
 }
