@@ -4,7 +4,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Vercel автоматически защищает cron endpoints, поэтому проверка авторизации не нужна
+  // Проверяем авторизацию через CRON_SECRET
+  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   try {
     console.log('Cron job started');
