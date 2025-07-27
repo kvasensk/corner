@@ -175,10 +175,9 @@
   background: #ffd600;
   color: #03011b;
   border: none;
-  border-radius: 8px ;
+  border-radius: 8px;
   font-weight: 700;
   font-size: 15px;
- 
   padding: 0 18px;
   min-width: 90px;
   height: 38px;
@@ -188,6 +187,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 /* .button:disabled {
   opacity: 0.7;
@@ -311,10 +313,11 @@
   color: #222;
 }
 
+/* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
   .header {
     padding: 0px 12px 0px 12px;
-    margin-top: env(safe-area-inset-top, 0px); /* Учитываем безопасную зону */
+    margin-top: env(safe-area-inset-top, 0px);
   }
 
   .logo {
@@ -340,7 +343,6 @@
 
   .main {
     margin-top: 28px;
-    /* Учитываем безопасную зону снизу */
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
@@ -351,7 +353,34 @@
   }
 
   .input {
-    font-size: 16px; /* Минимальный размер для предотвращения зума */
+    font-size: 16px;
+  }
+  
+  /* Специальные стили для маленьких экранов */
+  .button {
+    font-size: 14px;
+    padding: 0 12px;
+    min-width: 80px;
+    height: 38px;
+  }
+}
+
+/* Специальные стили для iPhone 13 mini и других очень маленьких экранов */
+@media (max-width: 375px) {
+  .button {
+    font-size: 13px;
+    padding: 0 10px;
+    min-width: 70px;
+    height: 36px;
+  }
+  
+  .formInner {
+    gap: 8px;
+  }
+  
+  .input {
+    font-size: 16px;
+    padding: 10px 12px;
   }
 }
 

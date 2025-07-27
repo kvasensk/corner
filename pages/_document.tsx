@@ -14,16 +14,17 @@ export default function Document() {
         <meta name='format-detection' content='telephone=no' />
         <meta name='mobile-web-app-capable' content='yes' />
 
-        {/* Предотвращение зума на iOS */}
+        {/* Специальные мета-теги для Safari */}
         <meta
           name='viewport'
-          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+          content='width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no'
         />
 
-        {/* Безопасная зона для iPhone X и новее */}
+        {/* Предотвращение проблем с Safari на iOS */}
+        <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1, viewport-fit=cover'
+          name='apple-mobile-web-app-status-bar-style'
+          content='black-translucent'
         />
       </Head>
       <body>
