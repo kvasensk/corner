@@ -13,6 +13,7 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  setDoc,
 } from 'firebase/firestore';
 import QueueList from './QueueList/QueueList';
 import NowPlayingBlock from './NowPlaying/NowPlayingBlock';
@@ -111,7 +112,9 @@ export default function Queue() {
     // Если ручной режим — не считаем таймеры
     let timeLeft = 0;
     if (!manualQueue && current && current.startTime) {
-      timeLeft = GAME_DURATION - (nowMs - current.startTime);
+      // Используем серверное время для точного расчета
+      const elapsed = nowMs - current.startTime;
+      timeLeft = GAME_DURATION - elapsed;
       if (timeLeft < 0) timeLeft = 0;
     }
     return { current, timeLeft, waiting, done };
@@ -138,6 +141,42 @@ export default function Queue() {
     return () => clearInterval(interval);
   }, []);
 
+  // Обновление времени в базе каждые 30 секунд (чтобы время шло даже без клиентов)
+  useEffect(() => {
+    const updateServerTime = async () => {
+      try {
+        await updateDoc(doc(db, 'config', 'serverTime'), {
+          lastUpdate: Date.now(),
+        });
+      } catch (error) {
+        // Если документ не существует, создаем его
+        await setDoc(doc(db, 'config', 'serverTime'), {
+          lastUpdate: Date.now(),
+        });
+      }
+    };
+
+    // Обновляем сразу при загрузке
+    updateServerTime();
+
+    // Затем каждые 10 секунд (было 30)
+    const interval = setInterval(updateServerTime, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Подписка на серверное время
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'config', 'serverTime'), snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        if (data?.lastUpdate) {
+          setNow(data.lastUpdate);
+        }
+      }
+    });
+    return () => unsub();
+  }, []);
+
   useEffect(() => {
     // getPlatformConfig().then(setPlatformConfig); // Удалено
   }, []);
@@ -147,31 +186,6 @@ export default function Queue() {
       setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     }
   }, []);
-
-  // Автоматическое продвижение очереди
-  useEffect(() => {
-    if (manualQueue) return; // Отключаем авто-логику в ручном режиме
-    if (!current) {
-      if (waiting.length > 0) {
-        const next = waiting[0];
-        updateDoc(doc(db, 'queue', next.id), {
-          status: 'playing',
-          startTime: Date.now(),
-        });
-      }
-      return;
-    }
-    if (timeLeft === 0 && current.startTime) {
-      updateDoc(doc(db, 'queue', current.id), { status: 'done', startTime: 0 });
-      if (waiting.length > 0) {
-        const next = waiting[0];
-        updateDoc(doc(db, 'queue', next.id), {
-          status: 'playing',
-          startTime: Date.now(),
-        });
-      }
-    }
-  }, [manualQueue, current, timeLeft, waiting]);
 
   // Фикс: при выключении ручного режима реактивировать playing
   useEffect(() => {
