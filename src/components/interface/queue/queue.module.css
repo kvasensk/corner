@@ -209,8 +209,8 @@
   color: #03011b;
   border: none;
   border-radius: 8px;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 14px;
   padding: 0 18px;
   min-width: 90px;
   height: 38px;
@@ -364,8 +364,8 @@
   color: #03011b;
   border: none;
   border-radius: 8px;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 14px;
   padding: 0 18px;
   min-width: 90px;
   height: 38px;
@@ -523,7 +523,8 @@
   
   /* Специальные стили для маленьких экранов */
   .button {
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     padding: 0 12px;
     min-width: 80px;
     height: 38px;
@@ -533,7 +534,8 @@
 /* Специальные стили для iPhone 13 mini и других очень маленьких экранов */
 @media (max-width: 375px) {
   .button {
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
     padding: 0 10px;
     min-width: 70px;
     height: 36px;
@@ -654,7 +656,8 @@
   }
 
   .button {
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 600;
     padding: 0 18px;
     min-width: 90px;
     height: 38px;
