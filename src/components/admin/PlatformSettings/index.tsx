@@ -1,16 +1,9 @@
-import { useState, useEffect } from 'react';
-import IOSSwitch from '../../../uikit/IOSSwitch';
-import NumberInput from '../../../uikit/NumberInput';
-import IconButton from '../../../uikit/IconButton';
+import React, { useState, useEffect } from 'react';
 import styles from './PlatformSettings.module.css';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../../lib/firebase';
 import { usePlatformConfig } from '../../../lib/PlatformConfigContext';
-
-export type PlatformConfig = {
-  showMenuTab: boolean;
-  showInfoTab: boolean;
-  gameDuration: number; // в минутах
-  manualQueue: boolean;
-};
+import type { PlatformConfig } from '../../../lib/firebase';
 
 export default function PlatformSettings() {
   const { config, setConfig, loading, error } = usePlatformConfig();
@@ -178,11 +171,15 @@ export default function PlatformSettings() {
         <div className={styles.settingRow}>
           <span className={styles.label}>MENU TAB:</span>
           <div className={styles.switchContainer}>
-            <IOSSwitch
-              checked={config.showMenuTab}
-              onChange={handleChange('showMenuTab')}
-              disabled={saving}
-            />
+            <label className={styles.switch}>
+              <input
+                type='checkbox'
+                checked={config.showMenuTab}
+                onChange={handleChange('showMenuTab')}
+                disabled={saving}
+              />
+              <span className={styles.slider}></span>
+            </label>
             <span className={styles.statusText}>
               {config.showMenuTab ? 'ENABLED' : 'DISABLED'}
             </span>
@@ -190,27 +187,17 @@ export default function PlatformSettings() {
         </div>
 
         <div className={styles.settingRow}>
-          <span className={styles.label}>INFO TAB:</span>
-          <div className={styles.switchContainer}>
-            <IOSSwitch
-              checked={config.showInfoTab}
-              onChange={handleChange('showInfoTab')}
-              disabled={saving}
-            />
-            <span className={styles.statusText}>
-              {config.showInfoTab ? 'ENABLED' : 'DISABLED'}
-            </span>
-          </div>
-        </div>
-
-        <div className={styles.settingRow}>
           <span className={styles.label}>MANUAL QUEUE:</span>
           <div className={styles.switchContainer}>
-            <IOSSwitch
-              checked={config.manualQueue}
-              onChange={handleChange('manualQueue')}
-              disabled={saving}
-            />
+            <label className={styles.switch}>
+              <input
+                type='checkbox'
+                checked={config.manualQueue}
+                onChange={handleChange('manualQueue')}
+                disabled={saving}
+              />
+              <span className={styles.slider}></span>
+            </label>
             <span className={styles.statusText}>
               {config.manualQueue ? 'ENABLED' : 'DISABLED'}
             </span>
@@ -235,48 +222,29 @@ export default function PlatformSettings() {
             >
               RANGE: 5-60 MINUTES
             </div>
-            <NumberInput
+            <input
+              type='number'
               value={durationDraft}
               min={5}
               max={60}
-              onChange={v => setDurationDraft(v.replace(/[^\d]/g, ''))}
-              disabled={saving || config.manualQueue}
-            />
-            <IconButton
-              icon={
-                saved ? (
-                  <svg width='22' height='22' viewBox='0 0 22 22' fill='none'>
-                    <circle cx='11' cy='11' r='11' fill='#00ff00' />
-                    <path
-                      d='M6 12.5L10 16L16 8'
-                      stroke='#000000'
-                      strokeWidth='2.2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    />
-                  </svg>
-                ) : (
-                  <svg width='22' height='22' viewBox='0 0 22 22' fill='none'>
-                    <circle cx='11' cy='11' r='11' fill='#ff0000' />
-                    <path
-                      d='M6 12.5L10 16L16 8'
-                      stroke='#ffffff'
-                      strokeWidth='2.2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    />
-                  </svg>
-                )
+              onChange={e =>
+                setDurationDraft(e.target.value.replace(/[^\d]/g, ''))
               }
+              disabled={saving || config.manualQueue}
+              className={styles.input}
+            />
+            <button
               onClick={handleSaveDuration}
-              success={saved}
               disabled={
                 Number(durationDraft) === config.gameDuration ||
                 saving ||
                 config.manualQueue
               }
+              className={styles.saveButton}
               aria-label='Save game duration'
-            />
+            >
+              {saved ? '✓' : 'SAVE'}
+            </button>
           </div>
         </div>
 

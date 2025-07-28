@@ -26,9 +26,7 @@ const db = getFirestore(app);
 export { app, db };
 
 export interface PlatformConfig {
-  showClientBurger: boolean;
   showMenuTab: boolean;
-  showInfoTab: boolean;
   showQueueTab: boolean;
   gameDuration: number;
   manualQueue: boolean;

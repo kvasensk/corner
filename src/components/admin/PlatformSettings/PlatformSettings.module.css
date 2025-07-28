@@ -103,6 +103,61 @@
   justify-content: flex-end;
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  transition: 0.3s;
+  border-radius: 24px;
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #00ff00;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+input:checked + .slider {
+  background-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: #000;
+}
+
+.switch input:disabled + .slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .statusText {
   font-size: 12px;
   color: #00ff00;
@@ -157,6 +212,60 @@
   justify-content: flex-end;
   opacity: 0.5;
   pointer-events: none;
+}
+
+.input {
+  background: #000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  border-radius: 0;
+  padding: 8px 12px;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+  width: 80px;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+  transition: all 0.3s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.saveButton {
+  background: #000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  border-radius: 0;
+  padding: 8px 16px;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-shadow: 0 0 5px #00ff00;
+  letter-spacing: 1px;
+  box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+}
+
+.saveButton:hover:not(:disabled) {
+  background: #00ff00;
+  color: #000;
+  border-color: #00ff00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+  text-shadow: none;
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .inputHint {

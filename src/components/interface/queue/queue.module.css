@@ -70,7 +70,7 @@
   width: 50%; 
   margin: 0 auto;
   padding-right: 10px;
-  /* gap: 18px; */
+  gap: 18px;
   /* width: auto; */
   /* margin-bottom: 0; */
 }
@@ -447,32 +447,74 @@
 }
 .modal {
   background: #fff;
-  border-radius: 14px;
-  padding: 32px 24px 24px 24px;
-  box-shadow: 0 4px 32px #0002;
-  min-width: 260px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
   text-align: center;
-  color: #222;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  color: #333;
 }
+
 .modal button {
-  margin: 0 8px;
-  padding: 7px 18px;
-  border-radius: 8px;
+  margin: 8px;
+  padding: 8px 16px;
   border: none;
-  font-weight: 600;
-  font-size: 14px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
 }
+
 .modal button:first-of-type {
-  background: #fd1d86;
-  color: #fff;
+  background: #ff4444;
+  color: white;
 }
+
 .modal button:last-of-type {
-  background: #eee;
-  color: #222;
+  background: #666;
+  color: white;
+}
+
+.infoModal {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid #b3c6f7;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  color: #333;
+}
+
+.infoModalContent h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1746d3;
+}
+
+.infoModalContent p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #555;
+}
+
+.infoModalContent button {
+  background: #1746d3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.infoModalContent button:hover {
+  background: #103ef5;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -528,6 +570,25 @@
     padding: 0 12px;
     min-width: 80px;
     height: 38px;
+  }
+
+  .infoModal {
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 90%;
+  }
+
+  .infoModalContent h3 {
+    font-size: 16px;
+  }
+
+  .infoModalContent p {
+    font-size: 13px;
+  }
+
+  .infoModalContent button {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 

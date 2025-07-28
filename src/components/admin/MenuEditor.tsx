@@ -268,7 +268,7 @@ export default function MenuEditor() {
             >
               <div className={styles.selectsRow}>
                 <label className={styles.labelRow}>
-                  Тип
+                  <span className={styles.selectLabel}>Тип</span>
                   <select
                     name='type'
                     value={form.type}
@@ -290,7 +290,7 @@ export default function MenuEditor() {
                   </select>
                 </label>
                 <label className={styles.labelRowMargin}>
-                  Раздел
+                  <span className={styles.selectLabel}>Раздел</span>
                   <select
                     value={newItem.section}
                     onChange={e =>

@@ -14,6 +14,7 @@ import {
   doc,
   updateDoc,
   setDoc,
+  getDoc,
 } from 'firebase/firestore';
 import QueueList from './QueueList/QueueList';
 import NowPlayingBlock from './NowPlaying/NowPlayingBlock';
@@ -37,6 +38,14 @@ export default function Queue() {
   const [deleting, setDeleting] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [infoData, setInfoData] = useState<{
+    automatic: { useDescription: boolean; description: string } | null;
+    manual: { useDescription: boolean; description: string } | null;
+  }>({
+    automatic: null,
+    manual: null,
+  });
 
   // Очистка очереди
   async function handleClearQueue() {
@@ -292,6 +301,40 @@ export default function Queue() {
     }
   }, [current, waiting, manualQueue]);
 
+  // Загружаем info данные
+  useEffect(() => {
+    const loadInfoData = async () => {
+      try {
+        // Загружаем automatic info
+        const automaticDoc = await getDoc(doc(db, 'info', 'automatic'));
+        const automaticData = automaticDoc.exists()
+          ? (automaticDoc.data() as {
+              useDescription: boolean;
+              description: string;
+            })
+          : null;
+
+        // Загружаем manual info
+        const manualDoc = await getDoc(doc(db, 'info', 'manual'));
+        const manualData = manualDoc.exists()
+          ? (manualDoc.data() as {
+              useDescription: boolean;
+              description: string;
+            })
+          : null;
+
+        setInfoData({
+          automatic: automaticData,
+          manual: manualData,
+        });
+      } catch (error) {
+        console.error('Error loading info data:', error);
+      }
+    };
+
+    loadInfoData();
+  }, []);
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -305,11 +348,19 @@ export default function Queue() {
           />
         </div>
         <div className={styles.menu}>
-          <button className={styles.menuActive} type='button'>
+          <button
+            className={styles.menuActive}
+            type='button'
+            onClick={() => router.push('/')}
+          >
             Бильярд
           </button>
           {platformConfig?.showMenuTab && (
-            <button className={styles.menuInactive} type='button'>
+            <button
+              className={styles.menuInactive}
+              type='button'
+              onClick={() => router.push('/menu')}
+            >
               Меню
             </button>
           )}
@@ -352,6 +403,31 @@ export default function Queue() {
         deleting={deleting}
         finishing={finishing}
       />
+      {showInfoModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.infoModal}>
+            <div className={styles.infoModalContent}>
+              <h3>Информация</h3>
+              {manualQueue ? (
+                <p>
+                  {infoData.manual?.useDescription &&
+                  infoData.manual?.description
+                    ? infoData.manual.description
+                    : 'Пожалуйста, завершите свою игру в очереди после окончания партии.'}
+                </p>
+              ) : (
+                <p>
+                  {infoData.automatic?.useDescription &&
+                  infoData.automatic?.description
+                    ? infoData.automatic.description
+                    : 'За помощью можно обратиться к Бариста.'}
+                </p>
+              )}
+              <button onClick={() => setShowInfoModal(false)}>Понятно</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className={styles.main}>
         <div className={styles.queueContainer}>
           {current && (
@@ -381,7 +457,13 @@ export default function Queue() {
             <span className={styles.formHint}>
               Чтобы встать в очередь, нужно купить напиток и подождать*
             </span>
-            <span className={styles.formInfoIcon}>i</span>
+            <span
+              className={styles.formInfoIcon}
+              onClick={() => setShowInfoModal(true)}
+              style={{ cursor: 'pointer' }}
+            >
+              i
+            </span>
           </div>
           <form onSubmit={handleAdd} className={styles.form}>
             <div className={styles.formInner}>
