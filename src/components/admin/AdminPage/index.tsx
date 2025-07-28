@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import PlatformSettings from '../PlatformSettings';
-import type { PlatformConfig } from '../PlatformSettings';
+import type { PlatformConfig } from '../../../lib/firebase';
 import MenuSettings from '../MenuSettings';
 import InfoSettings from '../InfoSettings';
 import styles from './AdminPage.module.css';
