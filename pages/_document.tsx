@@ -26,6 +26,12 @@ export default function Document() {
           name='apple-mobile-web-app-status-bar-style'
           content='black-translucent'
         />
+
+        {/* Дополнительные мета-теги для Safari */}
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, viewport-fit=cover'
+        />
       </Head>
       <body>
         <Main />

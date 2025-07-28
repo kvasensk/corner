@@ -59,6 +59,9 @@ html {
   
   /* Безопасная зона для iPhone X и новее */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  
+  /* Фиксированная высота для Safari */
+  height: 100%;
 }
 
 body {
@@ -70,16 +73,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* Убираем фиксированный body для Safari */
+  /* Правильная высота для Safari */
   min-height: 100vh;
+  height: 100vh;
   overflow-x: hidden;
+  
+  /* Дополнительные отступы для Safari */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Контейнер для скролла */
 #__next {
   min-height: 100vh;
+  height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+  
+  /* Дополнительные отступы для Safari */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Стили для input на мобильных устройствах */
@@ -116,4 +128,24 @@ input, textarea {
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+/* Специальные стили для Safari */
+@supports (-webkit-touch-callout: none) {
+  html {
+    /* Safari-specific viewport */
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    /* Safari-specific height */
+    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
+  }
+  
+  #__next {
+    /* Safari-specific height */
+    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
+  }
 }
