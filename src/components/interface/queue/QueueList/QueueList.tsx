@@ -11,12 +11,14 @@ export default function QueueList({
   loading,
   isAdmin,
   manualQueue = false,
+  onQueueChange,
 }: {
   waiting: QueueEntry[];
   done: QueueEntry[];
   loading: boolean;
   isAdmin?: boolean;
   manualQueue?: boolean;
+  onQueueChange?: () => void;
 }) {
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -28,14 +30,31 @@ export default function QueueList({
     await deleteDoc(doc(db, 'queue', modalUser.id));
     setDeleting(false);
     setModalUser(null);
+
+    // Уведомляем родительский компонент об изменении очереди
+    if (manualQueue && onQueueChange) {
+      setTimeout(() => {
+        onQueueChange();
+      }, 100);
+    }
   };
 
   const handleDone = async () => {
     if (!modalUser) return;
     setFinishing(true);
-    await updateDoc(doc(db, 'queue', modalUser.id), { status: 'done' });
+    await updateDoc(doc(db, 'queue', modalUser.id), {
+      status: 'done',
+      startTime: 0,
+    });
     setFinishing(false);
     setModalUser(null);
+
+    // Уведомляем родительский компонент об изменении очереди
+    if (manualQueue && onQueueChange) {
+      setTimeout(() => {
+        onQueueChange();
+      }, 100);
+    }
   };
 
   if (loading)

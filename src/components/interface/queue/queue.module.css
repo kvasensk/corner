@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
   height: 100vh;
-  background: linear-gradient(135deg, #1746d3 0%, #103ef5 50%, #2a3e7c 100%);
+  background: #1746d3;
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -9,19 +9,23 @@
   overflow-x: hidden;
   
   /* Дополнительные отступы для Safari */
+  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  
+  /* Flexbox для правильного расположения элементов */
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  width: 100%;
-  margin: 0 auto;
-  padding: 0px 12px 0px 12px;
+  flex-shrink: 0;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 0;
-  position: relative;
+  padding: 0px 12px 0px 12px;
+
+  z-index: 1;
+  opacity: 0.9;
 }
 
 .logo {
@@ -80,7 +84,7 @@
   color: #b3c6f7;
 }
 
-.notch {
+/* .notch {
   position: absolute;
   left: 50%;
   top: 0;
@@ -91,21 +95,31 @@
   border-radius: 0 0 36px 36px;
   z-index: 1;
   opacity: 0.9;
-}
+} */
 
 .queueScroll {
-  flex: 1 1 auto;
+  flex: 1;
   overflow-y: auto;
   min-height: 0;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 0 12px;
+  
+  /* Скрываем скроллбар на мобильных устройствах */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Скрываем скроллбар в WebKit браузерах (Chrome, Safari) */
+.queueScroll::-webkit-scrollbar {
+  display: none;
 }
 
 .formBlock {
+  flex-shrink: 0;
   width: 94%;
   background: #103ef5;
   border-radius: 18px;
@@ -113,7 +127,7 @@
   box-sizing: border-box;
   box-shadow: 0 6px 32px #0d1e4a33;
   color: #fff;
-  margin: 0 auto 8px auto;
+  margin: 12px auto 8px auto;
 }
 .formInner {
   width: 100%;
@@ -220,9 +234,25 @@
   
   /* Дополнительные отступы для Safari */
   padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  
+  /* Flexbox для основного контента */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.queueContainer {
+  flex-shrink: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  padding-left: 12px;
+  padding-right: 12px;
+  width: 100%;
 }
 
 .queueLabel {
+  flex-shrink: 0;
   color: #fff;
   font-size: 14px;
   font-weight: 500;
@@ -233,12 +263,122 @@
   margin-top: 12px;
 }
 
-.queueContainer {
-  max-width: 600px;
-  margin: 0 auto;
-  padding-left: 12px;
-  padding-right: 12px;
+.queueScroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.formBlock {
+  flex-shrink: 0;
+  width: 94%;
+  background: #103ef5;
+  border-radius: 18px;
+  padding: 18px 12px 14px 12px;
+  box-sizing: border-box;
+  box-shadow: 0 6px 32px #0d1e4a33;
+  color: #fff;
+  margin: 0 auto 8px auto;
+}
+.formInner {
+  width: 100%;
+  background: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0d1e4a11;
+  display: flex;
+  align-items: center;
+  padding: 4px 4px 4px 12px;
+  margin-top: 10px;
+}
+.formHintRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+.formHint {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.formInfoIcon {
+  width: 28px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  border: 2.5px solid #fff;
+  background: transparent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  margin-left: 8px;
+  box-sizing: border-box;
+  line-height: 1;
+}
+.form {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+.input {
+  flex: 1;
+  padding: 11px 10px;
+  font-size: 16px; /* Увеличиваем размер шрифта для предотвращения зума */
+  border-radius: 8px 0 0 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #020b24;
+  font-weight: 500;
+  font-family: inherit;
+  height: 38px;
+  box-sizing: border-box;
+  /* Предотвращаем зум на iOS */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Отключаем автозум на iOS */
+  transform: translateZ(0);
+}
+.button {
+  background: #ffd600;
+  color: #03011b;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 0 18px;
+  min-width: 90px;
+  height: 38px;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px #ffd60033;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* .button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+} */
+.formNote {
+  font-size: 10px;
+  color: #e0eaff;
+  margin-top: 0;
+  margin-left: 0;
+  margin-bottom: 8px;
+  display: block;
+  text-align: left;
 }
 
 .adminInformer {
@@ -327,7 +467,6 @@
 @media (max-width: 600px) {
   .header {
     padding: 0px 12px 0px 12px;
-    margin-top: env(safe-area-inset-top, 0px);
   }
 
   .logo {
@@ -354,6 +493,10 @@
   .main {
     margin-top: 28px;
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   /* Дополнительные стили для предотвращения проблем с виртуальной клавиатурой */
@@ -400,41 +543,61 @@
 
 @media (min-width: 601px) {
   .menuActive, .menuInactive {
-    font-size: 22px;
+    font-size: 16px;
   }
+
   .menu {
-    gap: 36px;
+    width: 50%;
   }
+
   .main {
-    margin-top: 48px;
-  }
-  .formBlock {
-    max-width: 400px;
-    padding: 22px 18px 16px 18px;
-    border-radius: 22px;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
+
+  .formBlock {
+    width: 94%;
+    background: #103ef5;
+    border-radius: 18px;
+    padding: 18px 12px 14px 12px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 32px #0d1e4a33;
+    color: #fff;
+    margin: 0 auto 8px auto;
+  }
+
   .formInner {
-    border-radius: 14px;
-    padding: 6px 6px 6px 18px;
-    margin-top: 14px;
-  }
-  .input {
-    font-size: 17px;
-    height: 44px;
-    border-radius: 12px 0 0 12px;
-  }
-  .button {
-    font-size: 17px;
-    min-width: 110px;
-    height: 44px;
-    border-radius: 0 12px 12px 0;
-  }
-  .formNote {
-    font-size: 12px;
+    width: 100%;
+    background: #f5f7fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0d1e4a11;
+    display: flex;
+    align-items: center;
+    padding: 4px 4px 4px 12px;
     margin-top: 10px;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 15px;
+    padding: 0 18px;
+    min-width: 90px;
+    height: 38px;
+  }
+
+  .formNote {
+    font-size: 10px;
+    color: #e0eaff;
+    margin-top: 0;
     margin-left: 0;
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
   }
 } 

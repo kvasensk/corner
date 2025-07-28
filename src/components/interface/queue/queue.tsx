@@ -40,13 +40,24 @@ export default function Queue() {
 
   // Очистка очереди
   async function handleClearQueue() {
-    const q = await getDocs(collection(db, 'queue'));
-    const batch: Promise<void>[] = [];
-    q.forEach(docSnap => {
-      batch.push(deleteDoc(doc(db, 'queue', docSnap.id)));
-    });
-    await Promise.all(batch);
-    setShowModal(false);
+    try {
+      const q = await getDocs(collection(db, 'queue'));
+      const batch: Promise<void>[] = [];
+      q.forEach(docSnap => {
+        batch.push(deleteDoc(doc(db, 'queue', docSnap.id)));
+      });
+      await Promise.all(batch);
+      setShowModal(false);
+
+      // В мануальном режиме синхронизируем статусы после очистки
+      if (manualQueue) {
+        setTimeout(() => {
+          syncManualStatuses();
+        }, 100);
+      }
+    } catch (error) {
+      // Ошибка очистки очереди
+    }
   }
 
   // Удаление игрока
@@ -56,6 +67,13 @@ export default function Queue() {
     await deleteDoc(doc(db, 'queue', modalUser.id));
     setDeleting(false);
     setModalUser(null);
+
+    // В мануальном режиме синхронизируем статусы после удаления
+    if (manualQueue) {
+      setTimeout(() => {
+        syncManualStatuses();
+      }, 100); // Небольшая задержка для обновления состояния
+    }
   };
 
   // Завершение игры для игрока
@@ -68,25 +86,46 @@ export default function Queue() {
     });
     setFinishing(false);
     setModalUser(null);
+
+    // В мануальном режиме синхронизируем статусы после завершения
+    if (manualQueue) {
+      setTimeout(() => {
+        syncManualStatuses();
+      }, 100); // Небольшая задержка для обновления состояния
+    }
   };
 
   // Добавление игрока
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    // Проверяем, есть ли сейчас playing или waiting
-    const q = await getDocs(collection(db, 'queue'));
-    const entries = q.docs.map(doc => doc.data() as QueueEntry);
-    const hasActive = entries.some(
-      q => q.status === 'playing' || q.status === 'waiting'
-    );
-    await addDoc(collection(db, 'queue'), {
-      name: name.trim(),
-      time: new Date().toISOString(),
-      status: hasActive ? 'waiting' : 'playing',
-      startTime: hasActive ? 0 : Date.now(),
-    });
-    setName('');
+
+    try {
+      // Проверяем, есть ли сейчас playing или waiting
+      const q = await getDocs(collection(db, 'queue'));
+      const entries = q.docs.map(doc => doc.data() as QueueEntry);
+      const hasActive = entries.some(
+        q => q.status === 'playing' || q.status === 'waiting'
+      );
+
+      await addDoc(collection(db, 'queue'), {
+        name: name.trim(),
+        time: new Date().toISOString(),
+        status: hasActive ? 'waiting' : 'playing',
+        startTime: hasActive ? 0 : Date.now(),
+      });
+
+      setName('');
+
+      // В мануальном режиме синхронизируем статусы после добавления
+      if (manualQueue) {
+        setTimeout(() => {
+          syncManualStatuses();
+        }, 100);
+      }
+    } catch (error) {
+      // Ошибка добавления игрока
+    }
   };
 
   const manualQueue = !!platformConfig?.manualQueue;
@@ -199,6 +238,60 @@ export default function Queue() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualQueue]);
 
+  // Функция для синхронизации статусов в мануальном режиме
+  const syncManualStatuses = async () => {
+    if (!manualQueue) return; // Только для мануального режима
+
+    try {
+      // Получаем актуальную очередь из базы
+      const q = await getDocs(query(collection(db, 'queue'), orderBy('time')));
+      const allEntries = q.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as QueueEntry[];
+
+      const playing = allEntries.find(q => q.status === 'playing');
+      const waiting = allEntries
+        .filter(q => q.status === 'waiting')
+        .sort(
+          (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+        );
+
+      // Если нет играющего, но есть ожидающие - назначаем следующего
+      if (!playing && waiting.length > 0) {
+        const next = waiting[0];
+
+        await updateDoc(doc(db, 'queue', next.id), {
+          status: 'playing',
+          startTime: Date.now(),
+        });
+      }
+    } catch (error) {
+      // Ошибка синхронизации статусов
+    }
+  };
+
+  // Синхронизируем статусы при изменении очереди в мануальном режиме
+  useEffect(() => {
+    if (manualQueue && queue.length > 0) {
+      const playing = queue.find(q => q.status === 'playing');
+      const waiting = queue.filter(q => q.status === 'waiting');
+
+      // Если нет играющего, но есть ожидающие - синхронизируем
+      if (!playing && waiting.length > 0) {
+        syncManualStatuses();
+      }
+    }
+  }, [queue, manualQueue]);
+
+  // Дополнительная синхронизация при изменении current в мануальном режиме
+  useEffect(() => {
+    if (manualQueue && !current && waiting.length > 0) {
+      // Если нет активного игрока, но есть ожидающие - назначаем следующего
+      syncManualStatuses();
+    }
+  }, [current, waiting, manualQueue]);
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -259,58 +352,61 @@ export default function Queue() {
         deleting={deleting}
         finishing={finishing}
       />
-      <div className={styles.queueContainer}>
-        {current && (
-          <NowPlayingBlock
-            current={current}
-            timeLeft={timeLeft}
+      <div className={styles.main}>
+        <div className={styles.queueContainer}>
+          {current && (
+            <NowPlayingBlock
+              current={current}
+              timeLeft={timeLeft}
+              isAdmin={isAdmin}
+              manualQueue={manualQueue}
+              gameDuration={platformConfig?.gameDuration || 25}
+              onAdminMenuClick={() => setModalUser(current)}
+            />
+          )}
+        </div>
+        <div className={styles.queueLabel}>Очередь:</div>
+        <div className={styles.queueScroll}>
+          <QueueList
+            waiting={waiting}
+            done={done}
+            loading={loading}
             isAdmin={isAdmin}
             manualQueue={manualQueue}
-            gameDuration={platformConfig?.gameDuration || 25}
-            onAdminMenuClick={() => setModalUser(current)}
+            onQueueChange={syncManualStatuses}
           />
-        )}
-      </div>
-      <div className={styles.queueLabel}>Очередь:</div>
-      <div className={styles.queueScroll}>
-        <QueueList
-          waiting={waiting}
-          done={done}
-          loading={loading}
-          isAdmin={isAdmin}
-          manualQueue={manualQueue}
-        />
-      </div>
-      <div className={styles.formBlock}>
-        <div className={styles.formHintRow}>
-          <span className={styles.formHint}>
-            Чтобы встать в очередь, нужно купить напиток и подождать*
-          </span>
-          <span className={styles.formInfoIcon}>i</span>
         </div>
-        <form onSubmit={handleAdd} className={styles.form}>
-          <div className={styles.formInner}>
-            <input
-              type='text'
-              placeholder='Имя'
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className={styles.input}
-              autoFocus
-              maxLength={20}
-            />
-            <button
-              type='submit'
-              className={styles.button}
-              disabled={!name.trim()}
-              aria-label='В очередь'
-            >
-              В очередь
-            </button>
+        <div className={styles.formBlock}>
+          <div className={styles.formHintRow}>
+            <span className={styles.formHint}>
+              Чтобы встать в очередь, нужно купить напиток и подождать*
+            </span>
+            <span className={styles.formInfoIcon}>i</span>
           </div>
-        </form>
-        <div className={styles.formNote}>
-          *1 напиток ~ {platformConfig?.gameDuration ?? 25} минут
+          <form onSubmit={handleAdd} className={styles.form}>
+            <div className={styles.formInner}>
+              <input
+                type='text'
+                placeholder='Имя'
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className={styles.input}
+                autoFocus
+                maxLength={20}
+              />
+              <button
+                type='submit'
+                className={styles.button}
+                disabled={!name.trim()}
+                aria-label='В очередь'
+              >
+                В очередь
+              </button>
+            </div>
+          </form>
+          <div className={styles.formNote}>
+            *1 напиток ~ {platformConfig?.gameDuration ?? 25} минут
+          </div>
         </div>
       </div>
     </div>
