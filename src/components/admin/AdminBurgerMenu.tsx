@@ -27,6 +27,7 @@ export default function AdminBurgerMenu({
     { label: 'PLATFORM SETTINGS', id: 'platform' },
     { label: 'MENU SETTINGS', id: 'menu' },
     { label: 'INFO SETTINGS', id: 'info' },
+    { label: 'README', id: 'readme' },
   ];
 
   return (

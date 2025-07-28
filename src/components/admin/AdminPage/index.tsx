@@ -4,6 +4,7 @@ import PlatformSettings from '../PlatformSettings';
 import type { PlatformConfig } from '../../../lib/firebase';
 import MenuSettings from '../MenuSettings';
 import InfoSettings from '../InfoSettings';
+import ReadmeSettings from '../ReadmeSettings';
 import styles from './AdminPage.module.css';
 import AdminBurgerMenu from '../AdminBurgerMenu';
 
@@ -13,9 +14,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isAuth, setIsAuth] = useState(false);
-  const [activeTab, setActiveTab] = useState<'platform' | 'menu' | 'info'>(
-    'platform'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'platform' | 'menu' | 'info' | 'readme'
+  >('platform');
   const isAdmin = true;
   const router = useRouter();
 
@@ -77,12 +78,13 @@ export default function AdminPage() {
     if (activeTab === 'platform') content = <PlatformSettings />;
     if (activeTab === 'menu') content = <MenuSettings />;
     if (activeTab === 'info') content = <InfoSettings />;
+    if (activeTab === 'readme') content = <ReadmeSettings />;
     return (
       <div className={styles.wrapper}>
         <AdminBurgerMenu
           activeTab={activeTab}
           onTabChange={tabId =>
-            setActiveTab(tabId as 'platform' | 'menu' | 'info')
+            setActiveTab(tabId as 'platform' | 'menu' | 'info' | 'readme')
           }
           isAdmin={isAdmin}
           onLogout={handleLogout}
