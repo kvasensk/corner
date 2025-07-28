@@ -114,3 +114,30 @@
   display: flex;
   gap: 6px;
 }
+
+/* Десктопные стили */
+@media (min-width: 601px) {
+  .nowPlayingBlock {
+    width: 100%;
+  }
+
+  .label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .card {
+    padding: 8px 10px 8px 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 36px;
+  }
+
+  .name {
+    font-size: 1rem;
+  }
+
+  .timeValue {
+    font-size: 1rem;
+  }
+}

@@ -7,15 +7,22 @@
   height: 100%;
   overflow-y: auto;
   
-  /* Скрываем скроллбар на мобильных устройствах */
+  /* Скрываем скроллбар только на мобильных устройствах */
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
 }
 
-/* Скрываем скроллбар в WebKit браузерах (Chrome, Safari) */
-.queueWrap::-webkit-scrollbar {
-  display: none;
+
+
+/* Скрываем скроллбар в WebKit браузерах только на мобильных устройствах */
+@media (max-width: 600px) {
+  .queueWrap {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .queueWrap::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .nowPlayingBlock, .queueBlock {
@@ -187,30 +194,62 @@
 
 @media (min-width: 601px) {
   .queueWrap {
-    gap: 32px;
+    gap: 16px;
+    height: auto;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    
+    /* Показываем скроллбар на десктопе */
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+  }
+
+  /* Стилизуем скроллбар для десктопа */
+  .queueWrap::-webkit-scrollbar {
+    width: 6px;
+    display: block;
+  }
+
+  .queueWrap::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .queueWrap::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 3px;
+  }
+
+  .queueWrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .queueWrap::-webkit-scrollbar-button {
+    display: none;
   }
 
   .card {
-    padding: 8px 10px 8px 10px;
-    font-size: 0.95rem;
-    min-height: 36px;
+    padding: 6px 8px 6px 8px;
+    font-size: 0.9rem;
+    min-height: 32px;
   }
 
   .nowPlayingBlock .card {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
+    padding: 8px 10px 8px 10px;
+    min-height: 36px;
   }
 
   .name {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .label {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .timeValue {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 }
 
