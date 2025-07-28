@@ -163,13 +163,12 @@ export default function PlatformSettings() {
   return (
     <div className={styles.container}>
       <div className={styles.terminalHeader}>
-        <span className={styles.terminalTitle}>PLATFORM CONFIGURATION</span>
-        <span className={styles.terminalStatus}>READY</span>
+        <span className={styles.terminalTitle}>Управление приложением</span>
       </div>
 
       <div className={styles.settingsList}>
         <div className={styles.settingRow}>
-          <span className={styles.label}>MENU TAB:</span>
+          <span className={styles.label}>Показывать кнопку меню</span>
           <div className={styles.switchContainer}>
             <label className={styles.switch}>
               <input
@@ -187,7 +186,9 @@ export default function PlatformSettings() {
         </div>
 
         <div className={styles.settingRow}>
-          <span className={styles.label}>MANUAL QUEUE:</span>
+          <span className={styles.label}>
+            Включить управление очередью для игроков
+          </span>
           <div className={styles.switchContainer}>
             <label className={styles.switch}>
               <input
@@ -208,7 +209,7 @@ export default function PlatformSettings() {
           <span
             className={config.manualQueue ? styles.labelDisabled : styles.label}
           >
-            GAME DURATION (MIN):
+            Время на партию:
           </span>
           <div
             className={
@@ -220,7 +221,7 @@ export default function PlatformSettings() {
                 config.manualQueue ? styles.inputHintDisabled : styles.inputHint
               }
             >
-              RANGE: 5-60 MINUTES
+              5-60 минут
             </div>
             <input
               type='number'
@@ -250,12 +251,13 @@ export default function PlatformSettings() {
 
         {config.manualQueue && (
           <div className={styles.warningMsg}>
-            ⚠️ GAME DURATION DISABLED IN MANUAL MODE
+            ⚠️ Ограничение времени на партию отключено в режиме ручного
+            управления
           </div>
         )}
 
         <div className={styles.settingRow}>
-          <span className={styles.label}>AUTO QUEUE ADVANCEMENT:</span>
+          <span className={styles.label}>Автономный контроль очереди</span>
           <div className={styles.statusContainer}>
             <span className={styles.statusIndicator}>
               {config?.manualQueue ? '🔴' : '🟢'}
@@ -267,7 +269,7 @@ export default function PlatformSettings() {
         </div>
 
         <div className={styles.settingRow}>
-          <span className={styles.label}>NIGHTLY CLEANUP:</span>
+          <span className={styles.label}>Очистка очереди в 1:30</span>
           <div className={styles.statusContainer}>
             <span className={styles.statusIndicator}>
               {nightlyCronStatus?.isRunning ? '🟢' : '🔴'}

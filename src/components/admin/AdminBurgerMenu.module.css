@@ -1,40 +1,38 @@
-/* Хакерский стиль для админ бургер меню */
+/* Glassmorphism style for AdminBurgerMenu */
 .burger {
   position: fixed;
   top: 20px;
   right: 20px;
   width: 50px;
   height: 50px;
-  background: #000000;
-  border: 2px solid #00ff00;
-  border-radius: 0;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  border-radius: 16px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(30, 41, 59, 0.12);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
 }
 
 .burger:hover {
-  background: #001100;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 32px rgba(30, 41, 59, 0.18);
+  transform: scale(1.07);
 }
 
 .burgerLine {
-  width: 25px;
-  height: 2px;
-  background: #00ff00;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-}
-
-.burger:hover .burgerLine {
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+  width: 26px;
+  height: 3px;
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 4px rgba(30, 41, 59, 0.10);
 }
 
 .menuOpen,
@@ -42,15 +40,19 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 320px;
   height: 100vh;
-  background: #000000;
-  border-left: 2px solid #00ff00;
+  background: rgba(255, 255, 255, 0.22);
+  border-left: none;
   z-index: 999;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  color: #00ff00;
-  box-shadow: -5px 0 20px rgba(0, 255, 0, 0.3);
-  transition: transform 0.3s ease;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  color: #222;
+  box-shadow: -8px 0 32px rgba(30, 41, 59, 0.10);
+  backdrop-filter: blur(18px);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  border-top-left-radius: 24px;
+  border-bottom-left-radius: 24px;
+  overflow: hidden;
 }
 
 .menuClosed {
@@ -62,30 +64,28 @@
 }
 
 .terminalHeader {
-  padding: 20px;
-  border-bottom: 1px solid #00ff00;
+  padding: 28px 24px 18px 24px;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0, 20, 0, 0.3);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
 }
 
 .terminalTitle {
-  font-size: 14px;
-  font-weight: bold;
-  text-shadow: 0 0 5px #00ff00;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: 1px;
+  color: #222;
+  opacity: 0.85;
 }
 
 .terminalStatus {
-  font-size: 12px;
-  color: #00ff00;
-  animation: blink 2s infinite;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+  font-size: 13px;
+  color: #4ade80;
+  font-weight: 600;
+  opacity: 0.8;
 }
 
 .tabList {
@@ -95,92 +95,104 @@
 }
 
 .tabList li {
-  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+  border-bottom: 1px solid rgba(30, 41, 59, 0.06);
 }
 
 .tab,
 .tabActive {
   width: 100%;
-  padding: 15px 20px;
+  padding: 18px 28px;
   background: transparent;
   border: none;
-  color: #00ff00;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  font-size: 14px;
+  color: #222;
+  font-family: inherit;
+  font-size: 15px;
   text-align: left;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  border-radius: 0 16px 16px 0;
+  opacity: 0.85;
 }
 
 .tabPrefix {
-  color: #00aa00;
-  font-weight: bold;
+  color: #60a5fa;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .tab:hover {
-  background: rgba(0, 255, 0, 0.1);
-  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+  background: rgba(236, 245, 255, 0.45);
+  box-shadow: inset 0 0 12px rgba(30, 41, 59, 0.04);
+  opacity: 1;
 }
 
 .tabActive {
-  background: rgba(0, 255, 0, 0.15);
-  box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3);
-  border-left: 3px solid #00ff00;
+  background: rgba(236, 245, 255, 0.65);
+  box-shadow: inset 0 0 18px rgba(30, 41, 59, 0.08);
+  color: #2563eb;
+  font-weight: 600;
+  opacity: 1;
 }
 
 .commandSection {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 20px;
-  border-top: 1px solid #00ff00;
-  background: rgba(0, 20, 0, 0.3);
+  padding: 24px 24px 32px 24px;
+  border-top: 1px solid rgba(30, 41, 59, 0.08);
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(8px);
 }
 
 .adminBtnMain,
 .adminBtnLogout {
   width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 10px;
-  background: #000000;
-  border: 1px solid #00ff00;
-  border-radius: 0;
-  color: #00ff00;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  font-size: 12px;
-  font-weight: bold;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.32);
+  border: none;
+  border-radius: 12px;
+  color: #222;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.06);
+  opacity: 0.92;
 }
 
 .commandPrefix {
-  color: #00aa00;
-  font-weight: bold;
+  color: #60a5fa;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .adminBtnMain:hover {
-  background: #001100;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-  transform: translateX(5px);
+  background: rgba(96, 165, 250, 0.13);
+  color: #2563eb;
+  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.10);
+  transform: translateX(4px);
 }
 
 .adminBtnLogout {
-  border-color: #ff0000;
-  color: #ff0000;
+  color: #ef4444;
+  background: rgba(255,255,255,0.22);
 }
 
 .adminBtnLogout:hover {
-  background: #110000;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-  transform: translateX(5px);
+  background: rgba(239, 68, 68, 0.10);
+  color: #b91c1c;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.10);
+  transform: translateX(4px);
 }
 
 .overlay {
@@ -189,30 +201,30 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(30, 41, 59, 0.18);
   z-index: 998;
+  backdrop-filter: blur(2px);
 }
 
-/* Адаптивность */
 @media (max-width: 600px) {
   .menuOpen,
   .menuClosed {
-    width: 280px;
+    width: 90vw;
+    min-width: 0;
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
   }
-  
   .terminalTitle {
-    font-size: 12px;
+    font-size: 13px;
   }
-  
   .tab,
   .tabActive {
-    font-size: 12px;
-    padding: 12px 15px;
+    font-size: 13px;
+    padding: 14px 18px;
   }
-  
   .adminBtnMain,
   .adminBtnLogout {
-    font-size: 11px;
-    padding: 10px 12px;
+    font-size: 12px;
+    padding: 11px 12px;
   }
 } 

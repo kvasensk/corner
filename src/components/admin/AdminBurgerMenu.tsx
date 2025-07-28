@@ -24,10 +24,10 @@ export default function AdminBurgerMenu({
   const router = useRouter();
 
   const tabs: Tab[] = [
-    { label: 'PLATFORM SETTINGS', id: 'platform' },
-    { label: 'MENU SETTINGS', id: 'menu' },
-    { label: 'INFO SETTINGS', id: 'info' },
-    { label: 'README', id: 'readme' },
+    { label: 'Настройки платформы', id: 'platform' },
+    { label: 'Управление / настройка меню', id: 'menu' },
+    { label: 'Настройки информации', id: 'info' },
+    { label: 'Руководство приложения', id: 'readme' },
   ];
 
   return (
@@ -43,8 +43,7 @@ export default function AdminBurgerMenu({
       </button>
       <nav className={open ? styles.menuOpen : styles.menuClosed}>
         <div className={styles.terminalHeader}>
-          <span className={styles.terminalTitle}>ADMIN TERMINAL</span>
-          <span className={styles.terminalStatus}>ONLINE</span>
+          <span className={styles.terminalTitle}>Опции</span>
         </div>
         <ul className={styles.tabList}>
           {tabs.map(tab => (
@@ -56,7 +55,6 @@ export default function AdminBurgerMenu({
                   setOpen(false);
                 }}
               >
-                <span className={styles.tabPrefix}>$</span>
                 {tab.label}
               </button>
             </li>
@@ -70,8 +68,7 @@ export default function AdminBurgerMenu({
               setOpen(false);
             }}
           >
-            <span className={styles.commandPrefix}>{'>'}</span>
-            GO TO MAIN
+            Вернуться на главую
           </button>
           <button
             className={styles.adminBtnLogout}
@@ -80,8 +77,7 @@ export default function AdminBurgerMenu({
               setOpen(false);
             }}
           >
-            <span className={styles.commandPrefix}>!</span>
-            LOGOUT
+            logout
           </button>
         </div>
       </nav>

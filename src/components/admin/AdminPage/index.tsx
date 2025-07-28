@@ -110,10 +110,10 @@ export default function AdminPage() {
           <div className={styles.webText}>WEB</div>
         </div>
 
-        <h2 className={styles.title}>ADMIN ACCESS</h2>
+        <h2 className={styles.title}>Вход в панель управления</h2>
 
         <div className={styles.inputGroup}>
-          <label className={styles.inputLabel}>LOGIN:</label>
+          <label className={styles.inputLabel}>Имя</label>
           <input
             type='text'
             placeholder='Enter username'
@@ -125,7 +125,7 @@ export default function AdminPage() {
         </div>
 
         <div className={styles.inputGroup}>
-          <label className={styles.inputLabel}>PASSWORD:</label>
+          <label className={styles.inputLabel}>Пароль</label>
           <input
             type='password'
             placeholder='Enter password'
@@ -140,7 +140,7 @@ export default function AdminPage() {
           disabled={loading || !username || !password}
           className={styles.button}
         >
-          {loading ? 'AUTHENTICATING...' : 'LOGIN'}
+          {loading ? 'Заходим...' : 'Войти'}
         </button>
 
         {error && <div className={styles.errorMsg}>{error}</div>}

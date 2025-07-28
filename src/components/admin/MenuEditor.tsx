@@ -190,10 +190,10 @@ export default function MenuEditor() {
       ) : items.length === 0 ? (
         <div className={styles.empty}>Пока нет позиций в меню</div>
       ) : (
-        <ul className={styles.menuList}>
+        <div className={styles.menuList}>
           {items.map(item => (
-            <li className={styles.menuCard} key={item.id}>
-              <div className={styles.cardHeader}>
+            <>
+              <div className={styles.cardHeader} key={item.id}>
                 <span className={styles.cardType}>
                   {typeOptions.find(t => t.value === item.type)?.label ||
                     'Напиток'}
@@ -246,9 +246,9 @@ export default function MenuEditor() {
                   </div>
                 </div>
               </div>
-            </li>
+            </>
           ))}
-        </ul>
+        </div>
       )}
       {modalOpen && (
         <div className={styles.modalOverlay}>

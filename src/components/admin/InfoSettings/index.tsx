@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './InfoSettings.module.css';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
+import { FiInfo } from 'react-icons/fi';
 
 interface InfoSettings {
   useDescription: boolean;
@@ -117,22 +118,35 @@ export default function InfoSettings() {
   };
 
   if (loading) {
-    return <div className={styles.loading}>LOADING INFO SETTINGS...</div>;
+    return (
+      <div className={styles.loading}>Загрузка настроек информации...</div>
+    );
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.terminalHeader}>
-        <div className={styles.terminalTitle}>INFO SETTINGS</div>
-        <div className={styles.terminalStatus}>ONLINE</div>
+        <div className={styles.terminalTitle}>Настройки информации</div>
+        <FiInfo
+          size={20}
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+            color: '#60a5fa',
+            opacity: 0.8,
+            verticalAlign: 'middle',
+          }}
+        />
       </div>
 
       <div className={styles.settingsList}>
         {/* Automatic Mode */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>AUTOMATIC MODE</div>
+          <div className={styles.sectionTitle}>
+            В автоматическом режиме очереди
+          </div>
           <div className={styles.settingRow}>
-            <div className={styles.label}>USE DESCRIPTION</div>
+            <div className={styles.label}>Использовать кастомный блок</div>
             <div className={styles.switchContainer}>
               <label className={styles.switch}>
                 <input
@@ -149,7 +163,6 @@ export default function InfoSettings() {
             </div>
           </div>
           <div className={styles.settingRow}>
-            <div className={styles.label}>DESCRIPTION</div>
             <div className={styles.textAreaContainer}>
               <textarea
                 value={automaticSettings.description}
@@ -170,7 +183,7 @@ export default function InfoSettings() {
                 maxLength={250}
               />
               <div className={styles.charCount}>
-                {automaticSettings.description.length}/250 characters
+                {automaticSettings.description.length}/250 символов
               </div>
             </div>
           </div>
@@ -180,16 +193,16 @@ export default function InfoSettings() {
               onClick={handleSaveAutomatic}
               disabled={saving}
             >
-              {saving ? 'SAVING...' : 'SAVE AUTOMATIC'}
+              {saving ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </div>
 
         {/* Manual Mode */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>MANUAL MODE</div>
+          <div className={styles.sectionTitle}>В ручном режиме очереди</div>
           <div className={styles.settingRow}>
-            <div className={styles.label}>USE DESCRIPTION</div>
+            <div className={styles.label}>Использовать кастомный блок</div>
             <div className={styles.switchContainer}>
               <label className={styles.switch}>
                 <input
@@ -206,7 +219,6 @@ export default function InfoSettings() {
             </div>
           </div>
           <div className={styles.settingRow}>
-            <div className={styles.label}>DESCRIPTION</div>
             <div className={styles.textAreaContainer}>
               <textarea
                 value={manualSettings.description}
@@ -225,7 +237,7 @@ export default function InfoSettings() {
                 maxLength={250}
               />
               <div className={styles.charCount}>
-                {manualSettings.description.length}/250 characters
+                {manualSettings.description.length}/250 символов
               </div>
             </div>
           </div>
@@ -235,7 +247,7 @@ export default function InfoSettings() {
               onClick={handleSaveManual}
               disabled={saving}
             >
-              {saving ? 'SAVING...' : 'SAVE MANUAL'}
+              {saving ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         </div>

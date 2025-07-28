@@ -29,10 +29,10 @@ export default function ReadmeSettings() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>PLATFORM MANUAL</h2>
-        <div className={styles.subtitle}>
+        <h2 className={styles.title}>Руководство по управлению системой</h2>
+        {/* <div className={styles.subtitle}>
           Руководство по управлению системой
-        </div>
+        </div> */}
       </div>
 
       <div className={styles.content}>
@@ -42,23 +42,23 @@ export default function ReadmeSettings() {
             <p>Основные настройки системы очереди:</p>
             <ul>
               <li>
-                <strong>Manual Queue</strong> - переключатель между
-                автоматическим и ручным режимом очереди
+                <strong>Включить управление очередью для игроков</strong> -
+                переключатель между автоматическим и ручным режимом очереди
               </li>
               <li>
-                <strong>Game Duration</strong> - время игры в минутах (по
+                <strong>Время на партию</strong> - время игры в минутах (по
                 умолчанию 25)
               </li>
               <li>
-                <strong>Show Menu Tab</strong> - отображение кнопки ~Меню~ в
-                интерфейсе
+                <strong>Показать кнопку меню</strong> - отображение кнопки
+                ~Меню~ в интерфейсе
               </li>
               <li>
-                <strong>AUTO QUEUE ADVANCEMENT</strong> - автоматическое
-                продвижение очереди по времени (ENABLED/DISABLED)
+                <strong>Автономный (гибридный) контроль очереди</strong> -
+                автоматическое продвижение очереди по времени (ENABLED/DISABLED)
               </li>
               <li>
-                <strong>Nightly Cleanup</strong> - автоматическая очистка
+                <strong>Очистка очереди в 1:30</strong> - автоматическая очистка
                 очереди в 1:30
               </li>
             </ul>

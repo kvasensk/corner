@@ -1,125 +1,82 @@
+/* Glassmorphism style for InfoSettings */
 .container {
-  background: #000000;
-  border: 2px solid #00ff00;
-  border-radius: 0;
-  padding: 0;
-  width: 100%;
-  margin: 0;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  color: #00ff00;
-  box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.3),
-    inset 0 0 20px rgba(0, 255, 0, 0.1);
-  position: relative;
-}
-
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(90deg, transparent 98%, #00ff00 100%),
-    linear-gradient(0deg, transparent 98%, #00ff00 100%);
-  background-size: 20px 20px;
-  opacity: 0.05;
-  pointer-events: none;
+  max-width: 520px;
+  margin: 40px auto;
+  background: rgba(255,255,255,0.22);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(30,41,59,0.10);
+  backdrop-filter: blur(18px);
+  padding: 0 0 32px 0;
+  overflow: hidden;
 }
 
 .terminalHeader {
-  padding: 24px 0;
-  border-bottom: 1px solid #00ff00;
+  padding: 28px 32px 18px 32px;
+  border-bottom: 1px solid rgba(30,41,59,0.08);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  gap: 8px;
 }
 
 .terminalTitle {
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 0 0 8px #00ff00;
-  letter-spacing: 2px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+  opacity: 0.85;
+  letter-spacing: 1px;
 }
 
 .terminalStatus {
-  font-size: 12px;
-  color: #00ff00;
-  animation: blink 2s infinite;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+  font-size: 14px;
+  color: #4ade80;
+  font-weight: 600;
+  opacity: 0.8;
 }
 
 .settingsList {
+  padding: 32px 32px 0 32px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 32px;
 }
 
 .section {
-  border: 1px solid rgba(0, 255, 0, 0.3);
-  border-radius: 0;
-  padding: 20px;
-  background: rgba(0, 255, 0, 0.02);
-  position: relative;
-}
-
-.section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(90deg, transparent 98%, #00ff00 100%),
-    linear-gradient(0deg, transparent 98%, #00ff00 100%);
-  background-size: 15px 15px;
-  opacity: 0.03;
-  pointer-events: none;
+  background: rgba(255,255,255,0.18);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(30,41,59,0.06);
+  padding: 24px 20px 20px 20px;
+  margin-bottom: 18px;
 }
 
 .sectionTitle {
-  font-size: 16px;
-  font-weight: bold;
-  color: #00ff00;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-  text-shadow: 0 0 5px #00ff00;
-  letter-spacing: 1px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 12px;
+  opacity: 0.9;
 }
 
 .settingRow {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 15px 0;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-  gap: 20px;
-  min-height: 50px;
+  gap: 18px;
+  margin-bottom: 12px;
 }
 
 .label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #00ff00;
-  min-width: 120px;
-  flex-shrink: 0;
-  letter-spacing: 1px;
-  text-shadow: 0 0 5px #00ff00;
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  opacity: 0.85;
 }
 
 .switchContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .switch {
@@ -142,172 +99,124 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #333;
-  transition: 0.3s;
+  background: rgba(236,245,255,0.7);
   border-radius: 24px;
-  border: 1px solid #00ff00;
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 8px rgba(30,41,59,0.06);
+}
+
+.switch input:checked + .slider {
+  background: #60a5fa;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 18px;
   width: 18px;
-  left: 2px;
-  bottom: 2px;
-  background-color: #00ff00;
-  transition: 0.3s;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  transition: transform 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 4px rgba(30,41,59,0.10);
 }
 
-input:checked + .slider {
-  background-color: #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-}
-
-input:checked + .slider:before {
+.switch input:checked + .slider:before {
   transform: translateX(20px);
-  background-color: #000;
-}
-
-.switch input:disabled + .slider {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .statusText {
-  font-size: 12px;
-  color: #00ff00;
-  min-width: 30px;
-  text-shadow: 0 0 3px #00ff00;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563eb;
+  opacity: 0.8;
 }
 
 .textAreaContainer {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  width: 100%;
 }
 
 .textArea {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #00ff00;
-  border-radius: 0;
-  background: #000;
-  color: #00ff00;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  font-size: 13px;
-  line-height: 1.4;
+  min-height: 60px;
+  border-radius: 10px;
+  border: 1px solid #e0e7ef;
+  background: rgba(255,255,255,0.7);
+  font-size: 15px;
+  color: #222;
+  padding: 10px 14px;
   resize: vertical;
-  min-height: 120px;
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
-  transition: all 0.3s;
-}
-
-.textArea:focus {
   outline: none;
-  border-color: #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+  transition: border 0.2s cubic-bezier(.4,0,.2,1);
 }
 
-.textArea:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.textAreaDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.textArea:disabled, .textAreaDisabled {
+  background: rgba(236,245,255,0.4);
+  color: #a1a1aa;
 }
 
 .charCount {
-  font-size: 11px;
-  color: #00ff00;
-  margin-top: 6px;
-  text-align: right;
-  text-shadow: 0 0 3px #00ff00;
+  font-size: 12px;
+  color: #64748b;
+  opacity: 0.7;
+  align-self: flex-end;
 }
 
 .saveButtonContainer {
+  margin-top: 10px;
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(0, 255, 0, 0.3);
 }
 
 .saveButton {
-  background: #000;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-  border-radius: 0;
-  padding: 10px 20px;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  font-size: 12px;
-  font-weight: bold;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #60a5fa;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s;
-  text-shadow: 0 0 5px #00ff00;
-  letter-spacing: 1px;
-  box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
-}
-
-.saveButton:hover:not(:disabled) {
-  background: #00ff00;
-  color: #000;
-  border-color: #00ff00;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
-  text-shadow: none;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 8px rgba(96,165,250,0.10);
 }
 
 .saveButton:disabled {
-  opacity: 0.5;
+  background: #bae6fd;
+  color: #fff;
   cursor: not-allowed;
 }
 
 .loading {
+  margin-top: 24px;
+  color: #2563eb;
+  font-weight: 600;
   text-align: center;
-  color: #00ff00;
-  font-size: 14px;
-  padding: 20px;
-  text-shadow: 0 0 5px #00ff00;
-}
-
-.saving {
-  text-align: center;
-  color: #00ff00;
-  font-size: 12px;
-  padding: 10px;
-  background: rgba(0, 255, 0, 0.1);
-  border-radius: 0;
-  margin-top: 10px;
-  text-shadow: 0 0 3px #00ff00;
+  font-size: 15px;
 }
 
 @media (max-width: 600px) {
   .container {
-    margin: 10px;
-    padding: 20px;
+    max-width: 98vw;
+    border-radius: 14px;
+    margin: 16px auto;
   }
-
-  .terminalTitle {
-    font-size: 16px;
+  .terminalHeader {
+    padding: 18px 12px 12px 12px;
   }
-
-  .label {
-    min-width: auto;
-    font-size: 13px;
+  .settingsList {
+    padding: 18px 12px 0 12px;
+    gap: 18px;
   }
-
+  .section {
+    padding: 12px 8px 8px 8px;
+    border-radius: 10px;
+  }
   .settingRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .textAreaContainer {
-    width: 100%;
+    gap: 8px;
   }
 } 

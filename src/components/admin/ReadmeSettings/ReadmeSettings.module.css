@@ -1,97 +1,86 @@
+/* Glassmorphism style for ReadmeSettings */
 .container {
-  background: #000;
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-  border-radius: 0;
-  padding: 0;
-  position: relative;
+  max-width: 700px;
+  margin: 40px auto;
+  background: rgba(255,255,255,0.22);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(30,41,59,0.10);
+  backdrop-filter: blur(18px);
+  padding: 0 0 32px 0;
   overflow: hidden;
-  font-family: 'Courier New', Monaco, Menlo, monospace;
-  color: #00ff00;
-  text-shadow: 0 0 8px #00ff00;
-  letter-spacing: 0.5px;
-}
-
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .header {
-  padding: 30px;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-  position: relative;
-  z-index: 1;
+  padding: 32px 40px 18px 40px;
+  border-bottom: 1px solid rgba(30,41,59,0.08);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  text-align: center;
 }
 
 .title {
-  margin: 0 0 10px 0;
-  font-size: 24px;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #00ff00;
-  text-shadow: 0 0 12px #00ff00;
+  font-size: 16px;
+  font-weight: 800;
+  color: #222;
+  opacity: 0.92;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 15px;
+  color: #2563eb;
   opacity: 0.8;
-  color: #00ff00;
+  font-weight: 500;
 }
 
 .content {
-  padding: 20px 30px 30px 30px;
-  position: relative;
-  z-index: 1;
+  padding: 32px 40px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .section {
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 255, 0, 0.2);
-  background: rgba(0, 255, 0, 0.02);
+  background: rgba(255,255,255,0.18);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(30,41,59,0.06);
+  margin-bottom: 18px;
+  overflow: hidden;
 }
 
 .sectionHeader {
   width: 100%;
-  padding: 15px 20px;
-  background: rgba(0, 255, 0, 0.05);
+  background: none;
   border: none;
-  cursor: pointer;
+  outline: none;
+  padding: 18px 24px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  color: #00ff00;
-  font-family: 'Courier New', Monaco, Menlo, monospace;
+  justify-content: space-between;
+  cursor: pointer;
   font-size: 16px;
-  font-weight: bold;
-  text-shadow: 0 0 8px #00ff00;
-  transition: all 0.3s ease;
+  font-weight: 700;
+  color: #222;
+  opacity: 0.88;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
 }
 
 .sectionHeader:hover {
-  background: rgba(0, 255, 0, 0.1);
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  background: rgba(236,245,255,0.45);
 }
 
 .sectionTitle {
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2563eb;
+  opacity: 0.92;
 }
 
 .arrow {
-  font-size: 12px;
-  transition: transform 0.3s ease;
-  color: #00ff00;
+  font-size: 18px;
+  color: #60a5fa;
+  transition: transform 0.2s cubic-bezier(.4,0,.2,1);
 }
 
 .arrowOpen {
@@ -99,107 +88,70 @@
 }
 
 .sectionContent {
-  padding: 20px;
-  border-top: 1px solid rgba(0, 255, 0, 0.2);
-  background: rgba(0, 0, 0, 0.3);
+  padding: 18px 24px 18px 24px;
+  background: rgba(255,255,255,0.12);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  font-size: 15px;
+  color: #222;
+  opacity: 0.92;
+}
+
+.textBlock {
+  margin-bottom: 12px;
 }
 
 .textBlock h3 {
-  margin: 0 0 15px 0;
-  font-size: 18px;
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 6px;
 }
 
-.textBlock p {
-  margin: 0 0 15px 0;
-  line-height: 1.6;
-  color: #00ff00;
-  opacity: 0.9;
+.textBlock h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-top: 12px;
+  margin-bottom: 4px;
 }
 
 .textBlock ul {
-  margin: 0 0 15px 0;
-  padding-left: 20px;
-  list-style: none;
+  margin: 8px 0 8px 18px;
+  padding: 0;
 }
 
-.textBlock ul li {
-  margin-bottom: 8px;
-  position: relative;
-  color: #00ff00;
-  opacity: 0.9;
-}
-
-.textBlock ul li::before {
-  content: '>';
-  position: absolute;
-  left: -15px;
-  color: #00ff00;
-  font-weight: bold;
-}
-
-.textBlock ul li strong {
-  color: #00ff00;
-  font-weight: bold;
-  text-shadow: 0 0 6px #00ff00;
-}
-
-.textBlock ul ul {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.textBlock ul ul li {
+.textBlock li {
   margin-bottom: 4px;
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 15px;
+  color: #222;
+  opacity: 0.85;
 }
 
-.textBlock ul ul li::before {
-  content: '>>';
-  left: -20px;
+.textBlock p, .textBlock em {
+  font-size: 15px;
+  color: #222;
+  opacity: 0.85;
 }
 
 @media (max-width: 600px) {
   .container {
-    margin: 10px;
-    padding: 0;
+    max-width: 98vw;
+    border-radius: 14px;
+    margin: 16px auto;
   }
-  
   .header {
-    padding: 20px;
+    padding: 18px 10px 10px 10px;
   }
-  
-  .title {
-    font-size: 20px;
-  }
-  
   .content {
-    padding: 15px 20px 20px 20px;
+    padding: 12px 6px 0 6px;
+    gap: 10px;
   }
-  
-  .sectionHeader {
-    padding: 12px 15px;
+  .sectionHeader, .sectionContent {
+    padding: 10px 8px;
     font-size: 14px;
   }
-  
-  .sectionContent {
-    padding: 15px;
-  }
-  
-  .textBlock h3 {
-    font-size: 16px;
-  }
-  
-  .textBlock p {
-    font-size: 14px;
-  }
-  
-  .textBlock ul li {
-    font-size: 14px;
+  .section {
+    border-radius: 10px;
   }
 } 
