@@ -31,6 +31,7 @@ export default function MenuPage() {
           price03: item.price03 || '',
           type: item.type || '',
           section: item.section || '',
+          order: typeof item.order === 'number' ? item.order : 0,
         }))
       );
     });
