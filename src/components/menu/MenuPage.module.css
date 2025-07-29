@@ -20,9 +20,6 @@
 }
 
 .header {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   flex-shrink: 0;
   display: flex;
@@ -135,10 +132,10 @@
   .header {
     max-width: 430px;
     margin: 0 auto;
-    left: 50%;
-    transform: translateX(-50%);
-    position: relative;
     padding: 0 0;
+    left: unset;
+    top: unset;
+    transform: none;
   }
   .main {
     max-width: 430px;
