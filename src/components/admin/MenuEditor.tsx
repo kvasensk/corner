@@ -10,18 +10,7 @@ import {
 import { db } from '../../lib/firebase';
 import ImageUploader from './ImageUploader';
 import styles from './MenuEditor.module.css';
-
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  price02?: string;
-  price03?: string;
-  type: string;
-  picture: string;
-  section?: string;
-}
+import { MenuItem } from '@/types/menu';
 
 const typeOptions = [
   { value: 'drink', label: 'Напиток' },
@@ -33,13 +22,13 @@ const sectionOptions: Record<
   { value: string; label: string }[]
 > = {
   drink: [
-    { value: 'кофе', label: 'Кофе' },
-    { value: 'авторские напитки', label: 'Авторские напитки' },
-    { value: 'чай', label: 'Чай' },
+    { value: 'coffee', label: 'Кофе' },
+    { value: 'authors', label: 'Авторские напитки' },
+    { value: 'tea', label: 'Чай' },
   ],
   food: [
-    { value: 'сендвичи', label: 'Сендвичи' },
-    { value: 'десерты', label: 'Десерты' },
+    { value: 'sandwich', label: 'Сендвичи' },
+    { value: 'desert', label: 'Десерты' },
   ],
 };
 
@@ -59,10 +48,7 @@ export default function MenuEditor() {
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
   const [newItem, setNewItem] = useState({
-    name: '',
-    price: '',
-    imageUrl: '',
-    section: 'кофе',
+    section: 'coffee',
   });
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
@@ -93,6 +79,7 @@ export default function MenuEditor() {
 
   const handleOpenModal = (item?: MenuItem) => {
     if (item) {
+      console.log('🚀 ~ handleOpenModal ~ item:', item);
       const validType =
         item.type === 'drink' || item.type === 'food' ? item.type : 'drink';
       setForm({
@@ -104,7 +91,7 @@ export default function MenuEditor() {
         type: validType,
         picture: item.picture || '',
       });
-      setNewItem({ ...newItem, section: item.section || 'кофе' });
+      setNewItem({ ...newItem, section: item.section || 'coffee' });
       setSelectedItemId(item.id);
     } else {
       setForm({
@@ -116,7 +103,7 @@ export default function MenuEditor() {
         type: 'drink',
         picture: '',
       });
-      setNewItem({ ...newItem, section: 'кофе' });
+      setNewItem({ ...newItem, section: 'coffee' });
       setSelectedItemId(null);
     }
     setFormError('');
@@ -137,28 +124,29 @@ export default function MenuEditor() {
         await updateDoc(doc(db, 'menu', 'items', 'items', selectedItemId), {
           name: form.name.trim(),
           description: form.description.trim(),
-          price: form.price.trim(),
-          price02: form.price02.trim(),
-          price03: form.price03.trim(),
-          type: form.type,
-          picture: form.picture,
-          section: newItem.section,
+          price: form.price?.trim() || '',
+          price02: form.price02?.trim() || '',
+          price03: form.price03?.trim() || '',
+          type: form.type || 'drink',
+          picture: form.picture || '',
+          section: newItem.section || 'coffee',
         });
       } else {
         await addDoc(collection(db, 'menu', 'items', 'items'), {
           name: form.name.trim(),
           description: form.description.trim(),
-          price: form.price.trim(),
-          price02: form.price02.trim(),
-          price03: form.price03.trim(),
-          type: form.type,
-          picture: form.picture,
-          section: newItem.section,
+          price: form.price?.trim() || '',
+          price02: form.price02?.trim() || '',
+          price03: form.price03?.trim() || '',
+          type: form.type || 'drink',
+          picture: form.picture || '',
+          section: newItem.section || 'coffee',
         });
       }
       setModalOpen(false);
       fetchItems();
     } catch (e) {
+      console.log('🚀 ~ handleSave ~ e:', e);
       setFormError('Ошибка сохранения');
     } finally {
       setSaving(false);
@@ -192,16 +180,15 @@ export default function MenuEditor() {
       ) : (
         <div className={styles.menuList}>
           {items.map(item => (
-            <>
-              <div className={styles.cardHeader} key={item.id}>
+            <div key={item.id}>
+              <div className={styles.cardHeader}>
                 <span className={styles.cardType}>
                   {typeOptions.find(t => t.value === item.type)?.label ||
                     'Напиток'}
                   {' / '}
-                  {item.section
-                    ? item.section.charAt(0).toUpperCase() +
-                      item.section.slice(1)
-                    : 'Кофе'}
+                  {sectionOptions[item.type as 'drink' | 'food']?.find(
+                    (opt: { value: string }) => opt.value === item.section
+                  )?.label || ''}
                 </span>
                 <div className={styles.cardBtns}>
                   <button
@@ -246,7 +233,7 @@ export default function MenuEditor() {
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ))}
         </div>
       )}
@@ -275,10 +262,17 @@ export default function MenuEditor() {
                     onChange={e => {
                       handleInput(e);
                       const newType = e.target.value as 'drink' | 'food';
-                      setNewItem(item => ({
-                        ...item,
-                        section: sectionOptions[newType][0].value,
-                      }));
+                      setNewItem(item => {
+                        const validSections = sectionOptions[newType].map(
+                          opt => opt.value
+                        );
+                        return {
+                          ...item,
+                          section: validSections.includes(item.section)
+                            ? item.section
+                            : sectionOptions[newType][0].value,
+                        };
+                      });
                     }}
                     className={styles.input}
                   >
@@ -325,89 +319,109 @@ export default function MenuEditor() {
                   className={styles.input}
                 />
               </label>
-              <label className={styles.label}>
-                Цена (₽)
-                <input
-                  name='price'
-                  value={form.price}
-                  onChange={handleInput}
-                  className={styles.input}
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                />
-              </label>
-              <label className={styles.label}>
-                Цена 0.3 (₽)
-                <input
-                  name='price03'
-                  value={form.price03}
-                  onChange={handleInput}
-                  className={styles.input}
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                />
-              </label>
-              <label className={styles.label}>
-                Цена 0.2 (₽)
-                <input
-                  name='price02'
-                  value={form.price02}
-                  onChange={handleInput}
-                  className={styles.input}
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                />
-              </label>
-              <div className={styles.label}>Картинка</div>
-              {form.picture ? (
-                <div className={styles.imagePreview}>
-                  <img
-                    src={form.picture}
-                    alt='Картинка блюда'
-                    className={styles.imagePreviewImg}
-                    onError={e => {
-                      if (!e.currentTarget.dataset.fallback) {
-                        e.currentTarget.src = '/file.svg';
-                        e.currentTarget.dataset.fallback = '1';
-                      }
-                    }}
+              {form.type === 'food' && (
+                <label className={styles.label}>
+                  Цена (₽)
+                  <input
+                    name='price'
+                    value={form.price}
+                    onChange={handleInput}
+                    className={styles.input}
+                    inputMode='numeric'
+                    pattern='[0-9]*'
                   />
-                  <button
-                    type='button'
-                    className={styles.imagePreviewRemove}
-                    onClick={() => setForm(f => ({ ...f, picture: '' }))}
-                    aria-label='Удалить картинку'
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <ImageUploader
-                  value={form.picture}
-                  onUpload={url => setForm(f => ({ ...f, picture: url }))}
-                />
+                </label>
               )}
-              {formError && <div className={styles.error}>{formError}</div>}
-              <button
-                className={styles.saveBtn}
-                type='submit'
-                disabled={saving}
-              >
-                {saving ? 'Сохраняем...' : 'Сохранить'}
-              </button>
+              {form.type === 'drink' && (
+                <>
+                  <label className={styles.label}>
+                    Цена 0.2 (₽)
+                    <input
+                      name='price02'
+                      value={form.price02}
+                      onChange={handleInput}
+                      className={styles.input}
+                      inputMode='numeric'
+                      pattern='[0-9]*'
+                    />
+                  </label>
+                  <label className={styles.label}>
+                    Цена 0.3 (₽)
+                    <input
+                      name='price03'
+                      value={form.price03}
+                      onChange={handleInput}
+                      className={styles.input}
+                      inputMode='numeric'
+                      pattern='[0-9]*'
+                    />
+                  </label>
+                </>
+              )}
+
+              <div className={styles.imageRow}>
+                <div className={styles.label}>Изображение</div>
+                {form.picture ? (
+                  <div className={styles.imagePreview}>
+                    <img
+                      src={form.picture}
+                      alt='Картинка блюда'
+                      className={styles.imagePreviewImg}
+                      onError={e => {
+                        if (!e.currentTarget.dataset.fallback) {
+                          e.currentTarget.src = '/file.svg';
+                          e.currentTarget.dataset.fallback = '1';
+                        }
+                      }}
+                    />
+                    <button
+                      type='button'
+                      className={styles.imagePreviewRemove}
+                      onClick={() => setForm(f => ({ ...f, picture: '' }))}
+                      aria-label='Удалить картинку'
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <div className={styles.imageUploader}>
+                    <ImageUploader
+                      value={form.picture}
+                      onUpload={url => setForm(f => ({ ...f, picture: url }))}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className={styles.saveBtns}>
+                <button
+                  className={styles.saveBtn}
+                  type='submit'
+                  disabled={saving}
+                >
+                  {saving ? 'Сохраняем...' : 'Сохранить'}
+                </button>
+
+                {formError && <div className={styles.error}>{formError}</div>}
+              </div>
             </form>
           </div>
         </div>
       )}
       {deleteModal.open && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalCustom}>
-            <div className={styles.deleteText}>Удалить эту позицию?</div>
+        <div className={styles.deleteModalOverlay}>
+          <div className={styles.deleteModalCustom}>
+            <div className={styles.deleteText}>
+              Хотите удалить{' '}
+              <b>{items.find(i => i.id === deleteModal.id)?.name}</b> из меню?
+            </div>
             <div className={styles.deleteBtns}>
               <button className={styles.deleteModalBtn} onClick={confirmDelete}>
                 Удалить
               </button>
-              <button className={styles.cancelBtn} onClick={handleCloseModal}>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setDeleteModal({ open: false, id: null })}
+              >
                 Отмена
               </button>
             </div>

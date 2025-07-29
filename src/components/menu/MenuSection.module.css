@@ -1,0 +1,45 @@
+.section {
+  margin: 32px 20px 9px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  
+  
+}
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 10px;
+}
+.title {
+  font-weight: 700;
+  font-size: 22px;
+  text-decoration: underline;
+
+}
+.volumeHeader {
+  display: flex;
+  margin-left: 16px;
+  gap: 24px;
+  font-weight: 700;
+  font-size: 18px;
+}
+.items {
+}
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 0 10px;
+}
+.itemPrices {
+  display: flex;
+  gap: 24px;
+  span{
+    min-width: 21px;
+    text-align: center;
+  }
+} 

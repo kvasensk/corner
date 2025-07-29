@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react';
 import AWS from 'aws-sdk';
 import styles from './ImageUploader.module.css';
 
-const S3_BUCKET = process.env.NEXT_PUBLIC_S3_BUCKET;
-const REGION = process.env.NEXT_PUBLIC_REGION;
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT;
-const ACCESS_KEY = process.env.NEXT_PUBLIC_ACCESS_KEY;
-const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
+const S3_BUCKET = process.env.NEXT_PUBLIC_YANDEX_CLOUD_BUCKET;
+const REGION = process.env.NEXT_PUBLIC_YANDEX_CLOUD_REGION;
+const ENDPOINT = process.env.NEXT_PUBLIC_YANDEX_CLOUD_ENDPOINT;
+const ACCESS_KEY = process.env.NEXT_PUBLIC_YANDEX_CLOUD_KEY;
+const SECRET_KEY = process.env.NEXT_PUBLIC_YANDEX_CLOUD_SECRET;
 
 const s3 = new AWS.S3({
   endpoint: ENDPOINT,
@@ -50,6 +50,7 @@ export default function ImageUploader({ value, onUpload }: ImageUploaderProps) {
       const url = `${ENDPOINT}/${S3_BUCKET}/${key}`;
       onUpload(url);
     } catch (e) {
+      console.log(e);
       setError('Ошибка загрузки');
     } finally {
       setLoading(false);

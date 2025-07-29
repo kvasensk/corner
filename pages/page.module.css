@@ -190,3 +190,13 @@
   font-weight: 500;
   letter-spacing: 1px;
 }
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  /* background: #1746d3; */
+  color: white;
+}

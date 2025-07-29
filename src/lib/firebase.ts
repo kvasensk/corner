@@ -56,3 +56,9 @@ export async function setPlatformConfig(config: PlatformConfig): Promise<void> {
   const ref = doc(db, 'config', 'platform');
   await setDoc(ref, config, { merge: true });
 }
+
+export async function getMenuItems() {
+  const itemsRef = collection(db, 'menu', 'items', 'items');
+  const snapshot = await getDocs(itemsRef);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
