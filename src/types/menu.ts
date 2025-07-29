@@ -8,4 +8,5 @@ export interface MenuItem {
   type: string;
   picture?: string;
   section: string;
+  order?: number;
 }

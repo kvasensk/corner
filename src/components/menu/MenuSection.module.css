@@ -43,3 +43,13 @@
     text-align: center;
   }
 } 
+.dragHandle {
+  cursor: grab;
+  margin-right: 12px;
+  font-size: 18px;
+  color: #b3c6f7;
+  user-select: none;
+}
+.dragHandle:active {
+  cursor: grabbing;
+} 

@@ -87,7 +87,7 @@
 }
 .menuActive:hover {
   background: transparent;
-  color: #03011b;
+  color: #bbbbbb;
 }
 .menuInactive {
   color: #fff;
@@ -105,4 +105,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.editBtn {
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 0 18px;
+  min-width: 90px;
+  height: 38px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  padding-top: 4px;
+}
+.editBtn:hover {
+  background: #1746d3;
+  color: #fff;
+}
+
+@media (min-width: 900px) {
+  .page {
+    align-items: center;
+  }
+  .header {
+    max-width: 430px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    position: relative;
+    padding: 0 0;
+  }
+  .main {
+    max-width: 430px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .menu {
+    width: auto;
+    padding-right: 0;
+    gap: 18px;
+  }
+  .logo {
+    width: auto;
+  }
 } 
