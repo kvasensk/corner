@@ -23,6 +23,7 @@ export default async function handler(
     await advanceQueue();
     return res.status(200).json({ message: 'Queue advanced' });
   } catch (e) {
+    console.log(e);
     return res.status(500).json({ error: 'Internal error' });
   }
 }
