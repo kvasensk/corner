@@ -27,12 +27,6 @@ export default function PlatformSettings() {
     }
   }, [config]);
 
-  // Проверяем статус cron при загрузке
-  useEffect(() => {
-    checkCronStatus();
-    checkNightlyCronStatus();
-  }, []);
-
   // Автоматически управляем cron в зависимости от режима очереди
   useEffect(() => {
     if (config && cronStatus !== null) {
