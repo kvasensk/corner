@@ -88,8 +88,8 @@ export default function MenuSection({
             <div key={item.id} className={styles.itemRow}>
               <span>{item.name}</span>
               <div className={styles.itemPrices}>
-                <span>{item.price02 || '-'}</span>
-                <span>{item.price03 || '-'}</span>
+                <span className={styles.price}>{item.price02 || '-'}</span>
+                <span className={styles.price}>{item.price03 || '-'}</span>
               </div>
             </div>
           ))

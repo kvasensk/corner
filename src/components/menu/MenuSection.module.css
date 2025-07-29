@@ -53,3 +53,7 @@
 .dragHandle:active {
   cursor: grabbing;
 } 
+
+.price{
+  width: 26px;
+}
