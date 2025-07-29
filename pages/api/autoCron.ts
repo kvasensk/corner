@@ -12,72 +12,19 @@ import { db } from '../../src/lib/firebase';
 import type { QueueEntry } from '../../src/types/queue';
 import type { PlatformConfig } from '../../src/lib/firebase';
 
-let isRunning = false;
-let nextCallTimeout: NodeJS.Timeout | null = null;
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(`[${new Date().toISOString()}] AutoCron called:`, req.method);
-
-  if (req.method === 'POST') {
-    const { action } = req.body;
-
-    if (action === 'start') {
-      if (isRunning) {
-        return res.status(200).json({ message: 'AutoCron already running' });
-      }
-
-      isRunning = true;
-      console.log('Starting auto cron...');
-
-      // Запускаем сразу
-      await advanceQueue();
-
-      // Планируем следующий вызов
-      scheduleNextCall();
-
-      return res.status(200).json({ message: 'AutoCron started successfully' });
-    }
-
-    if (action === 'stop') {
-      isRunning = false;
-      if (nextCallTimeout) {
-        clearTimeout(nextCallTimeout);
-        nextCallTimeout = null;
-      }
-      console.log('Stopping auto cron...');
-      return res.status(200).json({ message: 'AutoCron stopped successfully' });
-    }
-
-    if (action === 'status') {
-      return res.status(200).json({
-        isRunning,
-        hasTimeout: !!nextCallTimeout,
-      });
-    }
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
-
-  // GET запрос - просто статус
-  return res.status(200).json({
-    isRunning,
-    hasTimeout: !!nextCallTimeout,
-    message: 'AutoCron endpoint. Use POST with action: start/stop/status',
-  });
-}
-
-function scheduleNextCall() {
-  if (!isRunning) return;
-
-  // Планируем следующий вызов через 30 секунд
-  nextCallTimeout = setTimeout(async () => {
-    if (isRunning) {
-      console.log('AutoCron: Self-calling...');
-      await advanceQueue();
-      scheduleNextCall(); // Планируем следующий вызов
-    }
-  }, 30000);
+  try {
+    await advanceQueue();
+    return res.status(200).json({ message: 'Queue advanced' });
+  } catch (e) {
+    return res.status(500).json({ error: 'Internal error' });
+  }
 }
 
 async function advanceQueue() {
