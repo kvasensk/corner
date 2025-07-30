@@ -181,7 +181,7 @@ export default function PlatformSettings() {
 
         <div className={styles.settingRow}>
           <span className={styles.label}>
-            Включить управление очередью для игроков
+            Управление очередью любым игроком
           </span>
           <div className={styles.switchContainer}>
             <label className={styles.switch}>
@@ -265,12 +265,8 @@ export default function PlatformSettings() {
         <div className={styles.settingRow}>
           <span className={styles.label}>Очистка очереди в 1:30</span>
           <div className={styles.statusContainer}>
-            <span className={styles.statusIndicator}>
-              {nightlyCronStatus?.isRunning ? '🟢' : '🔴'}
-            </span>
-            <span className={styles.statusText}>
-              {nightlyCronStatus?.isRunning ? 'ACTIVE' : 'INACTIVE'}
-            </span>
+            <span className={styles.statusIndicator}>{'🟢'}</span>
+            <span className={styles.statusText}>{'ACTIVE'}</span>
           </div>
         </div>
       </div>

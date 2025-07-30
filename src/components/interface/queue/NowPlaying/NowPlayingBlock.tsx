@@ -6,7 +6,7 @@ function formatTimeLeft(ms: number) {
   const min = Math.floor(ms / 60000);
   const h = Math.floor(min / 60);
   const m = min % 60;
-  return h > 0 ? `${h}ч ${m} мин` : `${m} мин`;
+  return h > 0 ? `${h}ч ${m} мин` : `${m + 1} мин`;
 }
 
 export default function NowPlayingBlock({

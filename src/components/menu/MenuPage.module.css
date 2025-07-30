@@ -16,7 +16,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  margin-bottom: 80px;
+  margin-bottom: 64px;
+  margin-top: 14px;
 }
 
 .header {
@@ -119,7 +120,7 @@
   align-items: flex-start;
   justify-content: center;
   transition: background 0.2s, color 0.2s;
-  padding-top: 4px;
+  
 }
 .editBtn:hover {
   background: #1746d3;
