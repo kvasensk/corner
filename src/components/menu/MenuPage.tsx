@@ -75,9 +75,12 @@ export default function MenuPage() {
           />
         </div>
         <div className={styles.menu}>
-          <Link href='/' className={styles.menuActive}>
+          <button
+            className={styles.menuActive}
+            onClick={() => (window.location.href = '/')}
+          >
             Очередь
-          </Link>
+          </button>
           {isAdmin && (
             <button
               className={styles.editBtn}
