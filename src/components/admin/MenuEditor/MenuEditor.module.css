@@ -55,6 +55,11 @@
   border-radius: 10px;
   letter-spacing: 0.5px;
   white-space: nowrap;
+  height: 32px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .addBtn:hover {
   background: #2563eb;
