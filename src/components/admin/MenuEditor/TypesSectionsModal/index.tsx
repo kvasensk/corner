@@ -847,7 +847,7 @@ function CustomTypeItem({
                 className={styles.editBtn}
                 onClick={() => setEditing(true)}
               >
-                ✎
+                red
               </button>
               <button
                 className={styles.deleteBtn}
@@ -863,7 +863,7 @@ function CustomTypeItem({
                   )
                 }
               >
-                🗑
+                del
               </button>
             </>
           ) : null}

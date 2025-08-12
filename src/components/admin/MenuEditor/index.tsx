@@ -419,13 +419,13 @@ export default function MenuEditor() {
                     className={styles.editBtn}
                     onClick={() => handleOpenModal(item)}
                   >
-                    ✎
+                    red
                   </button>
                   <button
                     className={styles.deleteBtn}
                     onClick={() => handleDelete(item.id)}
                   >
-                    🗑
+                    del
                   </button>
                 </div>
               </div>
