@@ -7,21 +7,32 @@ import {
   DropResult,
 } from '@hello-pangea/dnd';
 import styles from './MenuSection.module.css';
+import EyeIcon from '../../uikit/EyeIcon';
 
 interface MenuSectionProps {
   title: string;
   items: MenuItem[];
   showVolumeHeader?: boolean;
+  onePriceColumn?: boolean;
+  dontShowPriceType?: boolean;
   editable?: boolean;
   onReorder?: (items: MenuItem[]) => void;
+  onToggleVisible?: () => void;
+  showVisibility?: boolean;
+  isVisible?: boolean;
 }
 
 export default function MenuSection({
   title,
   items,
   showVolumeHeader,
+  onePriceColumn,
   editable,
+  dontShowPriceType,
   onReorder,
+  onToggleVisible,
+  showVisibility,
+  isVisible,
 }: MenuSectionProps) {
   const [localItems, setLocalItems] = React.useState(items);
   React.useEffect(() => {
@@ -37,12 +48,25 @@ export default function MenuSection({
     onReorder?.(reordered);
   }
 
-  if (!localItems.length) return null;
+  // В обычном режиме пустые разделы не показываем,
+  // но в режиме редактирования (когда показывается глазик) — показываем заголовок
+  if (!localItems.length && !showVisibility) return null;
   return (
     <div className={styles.section}>
       <div className={styles.header}>
-        <span className={styles.title}>{title}</span>
-        {showVolumeHeader && (
+        <span className={styles.title}>
+          {showVisibility ? (
+            <button
+              onClick={onToggleVisible}
+              className={styles.eyeBtn}
+              aria-label={isVisible ? 'Скрыть раздел' : 'Показать раздел'}
+            >
+              <EyeIcon open={!!isVisible} size={24} />
+            </button>
+          ) : null}
+          {title}
+        </span>
+        {showVolumeHeader && !onePriceColumn && !dontShowPriceType && (
           <div className={styles.volumeHeader}>
             <span>0,2</span>
             <span>0,3</span>
@@ -57,7 +81,7 @@ export default function MenuSection({
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {localItems.map((item, idx) => (
                     <Draggable key={item.id} draggableId={item.id} index={idx}>
-                      {(provided, snapshot) => (
+                      {provided => (
                         <div
                           className={styles.itemRow}
                           ref={provided.innerRef}
@@ -71,8 +95,16 @@ export default function MenuSection({
                           </span>
                           <span>{item.name}</span>
                           <div className={styles.itemPrices}>
-                            <span>{item.price02 || '-'}</span>
-                            <span>{item.price03 || '-'}</span>
+                            {onePriceColumn ? (
+                              <span className={styles.price}>
+                                {item.price || '-'}
+                              </span>
+                            ) : (
+                              <>
+                                <span>{item.price02 || '-'}</span>
+                                <span>{item.price03 || '-'}</span>
+                              </>
+                            )}
                           </div>
                         </div>
                       )}
@@ -88,8 +120,14 @@ export default function MenuSection({
             <div key={item.id} className={styles.itemRow}>
               <span>{item.name}</span>
               <div className={styles.itemPrices}>
-                <span className={styles.price}>{item.price02 || '-'}</span>
-                <span className={styles.price}>{item.price03 || '-'}</span>
+                {onePriceColumn ? (
+                  <span className={styles.price}>{item.price || '-'}</span>
+                ) : (
+                  <>
+                    <span className={styles.price}>{item.price02 || '-'}</span>
+                    <span className={styles.price}>{item.price03 || '-'}</span>
+                  </>
+                )}
               </div>
             </div>
           ))

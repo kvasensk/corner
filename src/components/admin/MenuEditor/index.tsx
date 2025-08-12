@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   collection,
   getDocs,
@@ -6,36 +6,41 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  serverTimestamp,
+  query,
+  orderBy,
 } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import ImageUploader from './ImageUploader';
+import { db } from '../../../lib/firebase';
+import ImageUploader from '../ImageUploader';
 import styles from './MenuEditor.module.css';
+import TypesSectionsModal from './TypesSectionsModal';
 import { MenuItem } from '@/types/menu';
-
-const typeOptions = [
-  { value: 'drink', label: 'Напиток' },
-  { value: 'food', label: 'Еда' },
-];
-
-const sectionOptions: Record<
-  'drink' | 'food',
-  { value: string; label: string }[]
-> = {
-  drink: [
-    { value: 'coffee', label: 'Кофе' },
-    { value: 'authors', label: 'Авторские напитки' },
-    { value: 'tea', label: 'Чай' },
-  ],
-  food: [
-    { value: 'sandwich', label: 'Сендвичи' },
-    { value: 'desert', label: 'Десерты' },
-  ],
-};
+import Image from 'next/image';
 
 export default function MenuEditor() {
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<
+    'date_desc' | 'date_asc' | 'name_asc' | 'name_desc'
+  >('date_desc');
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [typesModalOpen, setTypesModalOpen] = useState(false);
+  const [typeDocs, setTypeDocs] = useState<
+    {
+      id: string;
+      value: string;
+      label: string;
+      sections?: {
+        value: string;
+        label: string;
+        order?: number;
+        not_for_delete?: boolean;
+      }[];
+      bevereges_price?: boolean;
+      standart?: boolean;
+    }[]
+  >([]);
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -58,14 +63,169 @@ export default function MenuEditor() {
 
   async function fetchItems() {
     setLoading(true);
-    const snap = await getDocs(collection(db, 'menu', 'items', 'items'));
-    setItems(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as MenuItem)));
+    let snap;
+    try {
+      const qRef = query(
+        collection(db, 'menu', 'items', 'items'),
+        orderBy('createdAt', 'desc')
+      );
+      snap = await getDocs(qRef);
+    } catch (e) {
+      // Fallback for older datasets without createdAt or missing index
+      console.warn('Falling back to unordered fetchItems due to:', e);
+      snap = await getDocs(collection(db, 'menu', 'items', 'items'));
+    }
+    type HasToMillis = { toMillis: () => number };
+    const isHasToMillis = (v: unknown): v is HasToMillis => {
+      return !!v && typeof (v as HasToMillis).toMillis === 'function';
+    };
+    type Raw = Record<string, unknown> & { createdAt?: unknown };
+    const normalized = snap.docs.map(d => {
+      const data = d.data() as Raw;
+      const createdAtRaw = data.createdAt;
+      let createdAtValue: number | undefined;
+      if (isHasToMillis(createdAtRaw)) {
+        createdAtValue = createdAtRaw.toMillis();
+      } else if (typeof createdAtRaw === 'number') {
+        createdAtValue =
+          createdAtRaw < 1_000_000_000_000 ? createdAtRaw * 1000 : createdAtRaw;
+      } else if (typeof createdAtRaw === 'string') {
+        // Try to parse common human-readable formats
+        let parsed = Date.parse(createdAtRaw);
+        if (Number.isNaN(parsed)) {
+          // Fallbacks: replace " at " and normalize timezone like "UTC+3" -> "+03:00"
+          const normalized = createdAtRaw
+            .replace(' at ', ' ')
+            .replace(/UTC\s*([+-]?)\s*(\d{1,2})/, (_m, sign, hh) => {
+              const s = sign || '+';
+              const h = String(hh).padStart(2, '0');
+              return `${s}${h}:00`;
+            });
+          parsed = Date.parse(normalized);
+        }
+        createdAtValue = Number.isNaN(parsed) ? undefined : parsed;
+      } else {
+        createdAtValue = undefined;
+      }
+      return {
+        id: d.id,
+        ...(data as object),
+        createdAt: createdAtValue,
+      } as MenuItem;
+    });
+    setItems(normalized);
     setLoading(false);
   }
 
   useEffect(() => {
     fetchItems();
   }, []);
+
+  // Load dynamic types/sections from Firestore
+  type TypeDoc = {
+    id: string;
+    value: string;
+    label: string;
+    sections?: { value: string; label: string; glass?: boolean }[];
+    bevereges_price?: boolean;
+  };
+  const fetchTypes = useCallback(async () => {
+    const snap = await getDocs(collection(db, 'menu', 'types', 'types'));
+    type RawType = {
+      value: string;
+      label: string;
+      order?: number;
+      sections?: {
+        value: string;
+        label: string;
+        order?: number;
+        not_for_delete?: boolean;
+      }[];
+      bevereges_price?: boolean;
+      standart?: boolean;
+    };
+    const docs = snap.docs.map(d => ({
+      id: d.id,
+      ...(d.data() as RawType),
+    })) as TypeDoc[];
+    setTypeDocs(
+      docs.map((d: TypeDoc) => ({
+        id: d.id,
+        value: d.value,
+        label: d.label,
+        sections: Array.isArray(
+          (
+            d as unknown as {
+              sections?: {
+                value: string;
+                label: string;
+                order?: number;
+                not_for_delete?: boolean;
+              }[];
+            }
+          ).sections
+        )
+          ? (
+              d as unknown as {
+                sections: {
+                  value: string;
+                  label: string;
+                  order?: number;
+                  not_for_delete?: boolean;
+                }[];
+              }
+            ).sections
+              .slice()
+              .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          : [],
+        bevereges_price:
+          typeof d.bevereges_price === 'boolean' ? d.bevereges_price : false,
+        standart: (d as unknown as { standart?: boolean }).standart === true,
+      }))
+    );
+  }, []);
+  useEffect(() => {
+    fetchTypes();
+  }, [fetchTypes]);
+
+  // Refresh types after closing the modal to reflect newly created/updated types/sections
+  useEffect(() => {
+    if (!typesModalOpen) {
+      fetchTypes();
+    }
+  }, [typesModalOpen, fetchTypes]);
+
+  const allTypes = useMemo(() => typeDocs.slice(), [typeDocs]);
+
+  function getTypeDocByValue(value: string) {
+    return typeDocs.find(t => t.value === value);
+  }
+
+  function getSectionsForType(
+    typeValue: string
+  ): { value: string; label: string }[] {
+    const doc = getTypeDocByValue(typeValue);
+    if (!doc) return [];
+    return (doc.sections || []).map(s => ({ value: s.value, label: s.label }));
+  }
+
+  function getTypeLabel(typeValue: string): string {
+    return typeDocs.find(t => t.value === typeValue)?.label || typeValue;
+  }
+
+  function getSectionLabel(typeValue: string, sectionValue?: string): string {
+    if (!sectionValue) return '';
+    const list = getSectionsForType(typeValue);
+    return list.find(s => s.value === sectionValue)?.label || sectionValue;
+  }
+
+  function getIsDrinkLike(typeValue: string): boolean {
+    // Standard types
+    // Use type-level bevereges_price flag; no hardcoded types
+    const doc = getTypeDocByValue(typeValue);
+    if (typeof doc?.bevereges_price === 'boolean') return !!doc.bevereges_price;
+    return false;
+  }
 
   const handleInput = (
     e: React.ChangeEvent<
@@ -79,9 +239,8 @@ export default function MenuEditor() {
 
   const handleOpenModal = (item?: MenuItem) => {
     if (item) {
-      console.log('🚀 ~ handleOpenModal ~ item:', item);
       const validType =
-        item.type === 'drink' || item.type === 'food' ? item.type : 'drink';
+        getTypeDocByValue(item.type)?.value || (allTypes[0]?.value ?? '');
       setForm({
         name: item.name || '',
         description: item.description || '',
@@ -100,10 +259,13 @@ export default function MenuEditor() {
         price: '',
         price02: '',
         price03: '',
-        type: 'drink',
+        type: allTypes[0]?.value ?? '',
         picture: '',
       });
-      setNewItem({ ...newItem, section: 'coffee' });
+      setNewItem({
+        ...newItem,
+        section: getSectionsForType(allTypes[0]?.value ?? '')[0]?.value || '',
+      });
       setSelectedItemId(null);
     }
     setFormError('');
@@ -141,12 +303,12 @@ export default function MenuEditor() {
           type: form.type || 'drink',
           picture: form.picture || '',
           section: newItem.section || 'coffee',
+          createdAt: serverTimestamp(),
         });
       }
       setModalOpen(false);
       fetchItems();
-    } catch (e) {
-      console.log('🚀 ~ handleSave ~ e:', e);
+    } catch {
       setFormError('Ошибка сохранения');
     } finally {
       setSaving(false);
@@ -162,16 +324,81 @@ export default function MenuEditor() {
     fetchItems();
   };
 
-  const validType =
-    form.type === 'drink' || form.type === 'food' ? form.type : 'drink';
+  const validType = form.type || 'drink';
+
+  const filteredSortedItems = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    let list = items.filter(i =>
+      q ? (i.name || '').toLowerCase().includes(q) : true
+    );
+    list = list.slice().sort((a, b) => {
+      const aTime = (a.createdAt as number | undefined) ?? -1;
+      const bTime = (b.createdAt as number | undefined) ?? -1;
+      switch (sort) {
+        case 'name_asc':
+          return (a.name || '').localeCompare(b.name || '');
+        case 'name_desc':
+          return (b.name || '').localeCompare(a.name || '');
+        case 'date_asc':
+          // oldest first; items without createdAt go to bottom
+          const aAsc = aTime === -1 ? Number.MAX_SAFE_INTEGER : aTime;
+          const bAsc = bTime === -1 ? Number.MAX_SAFE_INTEGER : bTime;
+          return aAsc - bAsc;
+        case 'date_desc':
+        default:
+          // newest first; items without createdAt go to bottom
+          const aDesc = aTime === -1 ? -Infinity : aTime;
+          const bDesc = bTime === -1 ? -Infinity : bTime;
+          return bDesc - aDesc;
+      }
+    });
+    return list;
+  }, [items, search, sort]);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Меню</h2>
-        <button className={styles.addBtn} onClick={() => handleOpenModal()}>
-          +
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.addBtn}
+            onClick={() => setTypesModalOpen(true)}
+          >
+            типы и разделы
+          </button>
+          <button className={styles.addBtn} onClick={() => handleOpenModal()}>
+            +
+          </button>
+        </div>
+      </div>
+      <div
+        className={styles.headerActions}
+        style={{ padding: '0 14px', gap: 12 }}
+      >
+        <input
+          className={styles.input}
+          placeholder='Поиск по названию'
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <select
+          className={styles.input}
+          value={sort}
+          onChange={e =>
+            setSort(
+              e.target.value as
+                | 'date_desc'
+                | 'date_asc'
+                | 'name_asc'
+                | 'name_desc'
+            )
+          }
+        >
+          <option value='date_desc'>Последние сверху</option>
+          <option value='date_asc'>Первые сверху</option>
+          <option value='name_asc'>А-Я</option>
+          <option value='name_desc'>Я-А</option>
+        </select>
       </div>
       {loading ? (
         <div className={styles.loading}>Загрузка...</div>
@@ -179,16 +406,13 @@ export default function MenuEditor() {
         <div className={styles.empty}>Пока нет позиций в меню</div>
       ) : (
         <div className={styles.menuList}>
-          {items.map(item => (
+          {filteredSortedItems.map(item => (
             <div key={item.id}>
               <div className={styles.cardHeader}>
                 <span className={styles.cardType}>
-                  {typeOptions.find(t => t.value === item.type)?.label ||
-                    'Напиток'}
+                  {getTypeLabel(item.type)}
                   {' / '}
-                  {sectionOptions[item.type as 'drink' | 'food']?.find(
-                    (opt: { value: string }) => opt.value === item.section
-                  )?.label || ''}
+                  {getSectionLabel(item.type, item.section)}
                 </span>
                 <div className={styles.cardBtns}>
                   <button
@@ -207,7 +431,7 @@ export default function MenuEditor() {
               </div>
               <div className={styles.cardBody}>
                 {item.picture && (
-                  <img
+                  <Image
                     src={item.picture}
                     alt={item.name}
                     className={styles.cardThumb}
@@ -237,6 +461,13 @@ export default function MenuEditor() {
           ))}
         </div>
       )}
+      <TypesSectionsModal
+        open={typesModalOpen}
+        onClose={() => setTypesModalOpen(false)}
+        defaultTypes={[]}
+        defaultSections={{}}
+        onAfterItemsChange={fetchItems}
+      />
       {modalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -261,22 +492,22 @@ export default function MenuEditor() {
                     value={form.type}
                     onChange={e => {
                       handleInput(e);
-                      const newType = e.target.value as 'drink' | 'food';
+                      const newType = e.target.value as string;
                       setNewItem(item => {
-                        const validSections = sectionOptions[newType].map(
+                        const validSections = getSectionsForType(newType).map(
                           opt => opt.value
                         );
                         return {
                           ...item,
                           section: validSections.includes(item.section)
                             ? item.section
-                            : sectionOptions[newType][0].value,
+                            : validSections[0] || '',
                         };
                       });
                     }}
                     className={styles.input}
                   >
-                    {typeOptions.map(opt => (
+                    {allTypes.map(opt => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
                       </option>
@@ -292,7 +523,7 @@ export default function MenuEditor() {
                     }
                     className={styles.input}
                   >
-                    {sectionOptions[validType].map(option => (
+                    {getSectionsForType(validType).map(option => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
@@ -319,7 +550,7 @@ export default function MenuEditor() {
                   className={styles.input}
                 />
               </label>
-              {form.type === 'food' && (
+              {!getIsDrinkLike(validType) && (
                 <label className={styles.label}>
                   Цена (₽)
                   <input
@@ -332,7 +563,7 @@ export default function MenuEditor() {
                   />
                 </label>
               )}
-              {form.type === 'drink' && (
+              {getIsDrinkLike(validType) && (
                 <>
                   <label className={styles.label}>
                     Цена 0.2 (₽)
@@ -363,6 +594,7 @@ export default function MenuEditor() {
                 <div className={styles.label}>Изображение</div>
                 {form.picture ? (
                   <div className={styles.imagePreview}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={form.picture}
                       alt='Картинка блюда'

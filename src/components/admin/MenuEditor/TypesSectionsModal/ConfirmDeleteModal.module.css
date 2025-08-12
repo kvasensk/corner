@@ -1,0 +1,48 @@
+.overlay {
+  
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.40);
+  z-index: 1100;
+}
+
+.box {
+
+
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  width: 82%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(30,41,59,0.15);
+}
+
+.text {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.deleteBtn,
+.cancelBtn {
+  background-color: transparent;
+  color: #2563eb;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.deleteBtn { color: #ef4444; }
+.deleteBtn:hover { background: #ef4444; color: #fff; }
+.cancelBtn:hover { background: #e2e8f0; }
+
+

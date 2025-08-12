@@ -15,10 +15,20 @@
   padding: 0 10px;
 }
 .title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
   font-weight: 700;
   font-size: 22px;
   text-decoration: underline;
+}
 
+.eyeBtn {
+  margin-right: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
 }
 .volumeHeader {
   display: flex;

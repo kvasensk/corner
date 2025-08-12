@@ -1,0 +1,391 @@
+.editTypeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  width: 100%;
+}
+/* Make edit form actions identical to new type form */
+.editTypeForm .actionsRow {
+  display: flex;
+  gap: 8px;
+}
+.editTypeForm .actionsRow button {
+  flex: 1 1 0;
+  height: 44px;
+}
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.40);
+  border-radius: 12px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 -1px 0 rgba(30, 41, 59, 0.06);
+  padding: 16px 16px 24px 16px;
+  width: 96%;
+  /* height: 100vh; */
+  height: fit-content; 
+  margin-top: 4px;
+  overflow-y: auto;
+  color: #222;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  position: relative;
+}
+
+.closeBtn {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  background: rgba(255,255,255,0.95);
+  color: #3f3f3f;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 10px rgba(30,41,59,0.15);
+  z-index: 1001;
+}
+.closeBtn:hover {
+  background: #60a5fa;
+  color: #fff;
+}
+
+.modalTitle {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+  margin: -4px -16px 12px -16px;
+  padding: 16px 16px 12px 16px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(30,41,59,0.08);
+}
+
+.typesHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0 12px 0;
+  border-bottom: 1px solid rgba(30,41,59,0.08);
+}
+.typesHeaderRow button {
+  width: 100%;
+}
+
+.newTypeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  width: 100%;
+}
+
+/* Make new type input stretch full width explicitly */
+.newTypeForm .input {
+  width: 100%;
+}
+
+/* Equal-sized action buttons */
+.newTypeForm .actionsRow {
+  display: flex;
+  gap: 8px;
+}
+.newTypeForm .actionsRow button {
+  flex: 1 1 0;
+  height: 44px;
+}
+.newTypeForm .actionsRow .cancelBtn {
+  font-size: 16px;
+  padding: 0 16px;
+}
+.newTypeForm .actionsRow .saveBtn {
+  padding: 0 16px;
+}
+
+.typesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.typeCard {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(30,41,59,0.06);
+  padding: 12px;
+  border: 1px solid rgba(30,41,59,0.06);
+}
+
+.badge {
+  background: #e0e7ef;
+  color: #2563eb;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  letter-spacing: 0.5px;
+}
+
+.sectionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sectionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 12px;
+  min-height: 36px;
+  font-size: 14px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #e0e7ef;
+}
+
+.chipDefault {
+  background: #f1f5f9;
+  color: #334155;
+}
+.chipNew {
+  background: #eef6ff;
+  color: #1d4ed8;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 12px;
+}
+
+.chipHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.chipActions {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.chipToggleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+  color: #334155;
+  font-size: 12px;
+}
+
+.inlineForm {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  flex-wrap: nowrap;
+}
+.inlineForm .input { flex: 1 1 auto; }
+.inlineForm .actionsRow { width: auto; display: flex; gap: 8px; }
+.inlineForm .addBtn {
+  padding: 0 14px;
+  height: 40px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+.actionsRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.inlineInput {
+  border: 1px solid #e0e7ef;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 14px;
+  background: #fff;
+  color: #222;
+  flex: 1 1 auto;
+  min-width: 120px;
+  max-width: calc(100vw - 140px);
+  width: 100%;
+  box-sizing: border-box;
+  caret-color: #2563eb;
+}
+.inlineInput::placeholder { color: #94a3b8; opacity: 1; }
+
+.input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  padding: 8px 10px;
+  font-size: 14px;
+  height: 40px;
+  background: rgba(255,255,255,0.7);
+  color: #222;
+  box-sizing: border-box;
+  outline: none;
+  transition: border 0.2s cubic-bezier(.4,0,.2,1);
+  font-family: inherit;
+}
+.input:focus {
+  border: 1px solid #60a5fa;
+  background: #fff;
+}
+
+.cardName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 1px;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.loading {
+  text-align: center;
+  color: #2563eb;
+  font-size: 16px;
+  padding: 20px;
+  opacity: 0.7;
+}
+
+.addBtn {
+  background: #60a5fa;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 8px rgba(96,165,250,0.10);
+}
+.addBtn:hover {
+  background: #2563eb;
+}
+.addBtn:disabled {
+  background: #cfe6ff;
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.saveBtn {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #60a5fa;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 8px rgba(96,165,250,0.10);
+}
+.saveBtn:hover {
+  background: #2563eb;
+}
+
+.cancelBtn, .deleteBtn, .editBtn {
+  background-color: transparent;
+  color: #2563eb;
+   border:none; 
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s cubic-bezier(.4,0,.2,1);
+}
+.cancelBtn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+.deleteBtn {
+  color: #ef4444;
+}
+.deleteBtn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+.editBtn:hover {
+  background: #60a5fa;
+  color: #fff;
+}
+
+/* Confirm deletion overlay */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.40);
+  z-index: 1100;
+}
+.confirmBox {
+  position: absolute;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(30,41,59,0.15);
+}
+.confirmText {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.confirmActions { display: flex; gap: 10px; justify-content: flex-end; }
+
+@media (max-width: 600px) {
+  .modal::-webkit-scrollbar { display: none; }
+}
+
+@media (min-width: 601px) {
+  .modalOverlay { align-items: flex-start; padding-top: 24px; }
+  .modal {
+    border-radius: 18px;
+    padding: 24px 24px 28px 24px;
+    max-width: 560px;
+    width: 92%;
+    height: auto;
+    max-height: 90vh;
+  }
+  .modalTitle { position: static; margin: 0 0 16px 0; padding: 0 0 12px 4px; }
+  .typesHeaderRow { padding: 8px 12px; justify-content: flex-end; }
+  .typesHeaderRow button { width: auto; }
+  .inlineForm { padding: 8px 12px; }
+}
+
+
