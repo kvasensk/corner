@@ -361,7 +361,7 @@ export default function MenuEditor() {
         <h2 className={styles.title}>Меню</h2>
         <div className={styles.headerActions}>
           <button
-            className={styles.addBtn}
+            className={`${styles.addBtn} ${styles.addBtnCompact}`}
             onClick={() => setTypesModalOpen(true)}
           >
             типы и разделы

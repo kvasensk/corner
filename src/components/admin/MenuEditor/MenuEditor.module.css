@@ -49,6 +49,13 @@
   box-shadow: 0 2px 8px rgba(96,165,250,0.10);
   letter-spacing: 1px;
 }
+.addBtnCompact {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
 .addBtn:hover {
   background: #2563eb;
 }
