@@ -4,4 +4,5 @@ export interface QueueEntry {
   time: string;
   status: 'waiting' | 'playing' | 'done';
   startTime: number;
+  deviceId?: string;
 }

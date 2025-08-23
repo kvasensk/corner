@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+/* eslint-disable @next/next/no-img-element */
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import styles from './queue.module.css';
 import cornerLogo from '../../../../public/assets/images/logo.png';
 import { db } from '../../../lib/firebase';
@@ -33,12 +34,13 @@ export default function Queue() {
   const [now, setNow] = useState(Date.now());
   const [showModal, setShowModal] = useState(false);
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
-  const { config: platformConfig, loading: configLoading } =
-    usePlatformConfig();
+  const { config: platformConfig } = usePlatformConfig();
   const [deleting, setDeleting] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [deviceId, setDeviceId] = useState<string | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showDupModal, setShowDupModal] = useState(false);
   const [infoData, setInfoData] = useState<{
     automatic: { useDescription: boolean; description: string } | null;
     manual: { useDescription: boolean; description: string } | null;
@@ -64,7 +66,7 @@ export default function Queue() {
           syncManualStatuses();
         }, 100);
       }
-    } catch (error) {
+    } catch {
       // Ошибка очистки очереди
     }
   }
@@ -117,11 +119,25 @@ export default function Queue() {
         q => q.status === 'playing' || q.status === 'waiting'
       );
 
+      // Блок повторной записи подряд для того же устройства
+      const last = [...entries].sort(
+        (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+      )[0];
+      if (
+        deviceId &&
+        last &&
+        (last as QueueEntry & { deviceId?: string }).deviceId === deviceId
+      ) {
+        setShowDupModal(true);
+        return;
+      }
+
       await addDoc(collection(db, 'queue'), {
         name: name.trim(),
         time: new Date().toISOString(),
         status: hasActive ? 'waiting' : 'playing',
         startTime: hasActive ? 0 : Date.now(),
+        deviceId: deviceId || null,
       });
 
       setName('');
@@ -132,13 +148,13 @@ export default function Queue() {
           syncManualStatuses();
         }, 100);
       }
-    } catch (error) {
+    } catch {
       // Ошибка добавления игрока
     }
   };
 
   const manualQueue = !!platformConfig?.manualQueue;
-  const gameDuration = platformConfig?.gameDuration || 25;
+  // const gameDuration = platformConfig?.gameDuration || 25; // not used directly; kept via props
 
   // Основная логика очереди
   const { current, timeLeft, waiting, done } = useMemo(() => {
@@ -166,7 +182,7 @@ export default function Queue() {
       if (timeLeft < 0) timeLeft = 0;
     }
     return { current, timeLeft, waiting, done };
-  }, [queue, now, platformConfig]);
+  }, [queue, now, platformConfig, manualQueue]);
 
   // Подписка на очередь
   useEffect(() => {
@@ -196,7 +212,7 @@ export default function Queue() {
         await updateDoc(doc(db, 'config', 'serverTime'), {
           lastUpdate: Date.now(),
         });
-      } catch (error) {
+      } catch {
         // Если документ не существует, создаем его
         await setDoc(doc(db, 'config', 'serverTime'), {
           lastUpdate: Date.now(),
@@ -235,6 +251,18 @@ export default function Queue() {
     }
   }, []);
 
+  // Инициализация deviceId
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let id = localStorage.getItem('deviceId');
+    if (!id) {
+      id = (self.crypto?.randomUUID?.() ||
+        Math.random().toString(36).slice(2)) as string;
+      localStorage.setItem('deviceId', id);
+    }
+    setDeviceId(id);
+  }, []);
+
   // Автоматический режим: если нет текущего, назначаем следующего из очереди
   useEffect(() => {
     if (!manualQueue && !current && waiting.length > 0) {
@@ -244,11 +272,10 @@ export default function Queue() {
         startTime: Date.now(),
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualQueue, current, waiting]);
 
   // Функция для синхронизации статусов в мануальном режиме
-  const syncManualStatuses = async () => {
+  const syncManualStatuses = useCallback(async () => {
     if (!manualQueue) return; // Только для мануального режима
 
     try {
@@ -275,10 +302,10 @@ export default function Queue() {
           startTime: Date.now(),
         });
       }
-    } catch (error) {
+    } catch {
       // Ошибка синхронизации статусов
     }
-  };
+  }, [manualQueue]);
 
   // Синхронизируем статусы при изменении очереди в мануальном режиме
   useEffect(() => {
@@ -291,7 +318,7 @@ export default function Queue() {
         syncManualStatuses();
       }
     }
-  }, [queue, manualQueue]);
+  }, [queue, manualQueue, syncManualStatuses]);
 
   // Дополнительная синхронизация при изменении current в мануальном режиме
   useEffect(() => {
@@ -299,7 +326,7 @@ export default function Queue() {
       // Если нет активного игрока, но есть ожидающие - назначаем следующего
       syncManualStatuses();
     }
-  }, [current, waiting, manualQueue]);
+  }, [current, waiting, manualQueue, syncManualStatuses]);
 
   // Загружаем info данные
   useEffect(() => {
@@ -327,8 +354,8 @@ export default function Queue() {
           automatic: automaticData,
           manual: manualData,
         });
-      } catch (error) {
-        console.error('Error loading info data:', error);
+      } catch (e) {
+        console.error('Error loading info data:', e);
       }
     };
 
@@ -397,6 +424,36 @@ export default function Queue() {
           </div>
         </div>
       )}
+      {showDupModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal} style={{ position: 'relative' }}>
+            <button
+              className={styles.modalCloseBtn}
+              aria-label='Закрыть'
+              onClick={() => setShowDupModal(false)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: 8,
+                background: 'transparent',
+                border: 'none',
+                color: '#333',
+                fontSize: 18,
+                cursor: 'pointer',
+              }}
+            >
+              ×
+            </button>
+            <div style={{ marginBottom: 12, fontWeight: 600 }}>
+              Действие недоступно
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              Нельзя делать две записи подряд с одного устройства.
+            </div>
+            <button onClick={() => setShowDupModal(false)}>Понятно</button>
+          </div>
+        </div>
+      )}
       <AdminQueueModal
         user={modalUser}
         open={!!modalUser}
@@ -441,6 +498,7 @@ export default function Queue() {
               manualQueue={manualQueue}
               gameDuration={platformConfig?.gameDuration || 25}
               onAdminMenuClick={() => setModalUser(current)}
+              deviceId={deviceId}
             />
           )}
         </div>
@@ -453,6 +511,7 @@ export default function Queue() {
             isAdmin={isAdmin}
             manualQueue={manualQueue}
             onQueueChange={syncManualStatuses}
+            deviceId={deviceId}
           />
         </div>
         <div className={styles.formBlock}>

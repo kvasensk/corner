@@ -16,6 +16,7 @@ export default function NowPlayingBlock({
   manualQueue,
   gameDuration = 25,
   onAdminMenuClick,
+  deviceId,
 }: {
   current: QueueEntry;
   timeLeft: number;
@@ -23,6 +24,7 @@ export default function NowPlayingBlock({
   manualQueue?: boolean;
   gameDuration?: number;
   onAdminMenuClick?: () => void;
+  deviceId?: string | null;
 }) {
   // В ручном режиме показываем сплошной фон (одно деление)
   const total = manualQueue ? 1 : gameDuration;
@@ -74,7 +76,9 @@ export default function NowPlayingBlock({
               </span>
             </span>
           )}
-          {(isAdmin || manualQueue) && (
+          {(isAdmin ||
+            manualQueue ||
+            (deviceId && current.deviceId === deviceId)) && (
             <button
               className={styles.adminMenuBtn}
               onClick={e => {

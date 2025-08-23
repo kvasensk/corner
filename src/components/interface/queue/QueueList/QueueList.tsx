@@ -12,6 +12,7 @@ export default function QueueList({
   isAdmin,
   manualQueue = false,
   onQueueChange,
+  deviceId,
 }: {
   waiting: QueueEntry[];
   done: QueueEntry[];
@@ -19,6 +20,7 @@ export default function QueueList({
   isAdmin?: boolean;
   manualQueue?: boolean;
   onQueueChange?: () => void;
+  deviceId?: string | null;
 }) {
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -96,7 +98,9 @@ export default function QueueList({
               {!manualQueue && (
                 <span className={styles.timeInfo}>В очереди</span>
               )}
-              {(isAdmin || manualQueue) && (
+              {(isAdmin ||
+                manualQueue ||
+                (deviceId && entry.deviceId === deviceId)) && (
                 <button
                   className={styles.adminMenuBtn}
                   onClick={e => {
