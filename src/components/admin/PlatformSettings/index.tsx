@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from 'react';
 import styles from './PlatformSettings.module.css';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../../lib/firebase';
+import ImageUploader from '../ImageUploader';
+// import { doc, getDoc, setDoc } from 'firebase/firestore';
+// import { db } from '../../../lib/firebase';
 import { usePlatformConfig } from '../../../lib/PlatformConfigContext';
 import type { PlatformConfig } from '../../../lib/firebase';
 
@@ -14,12 +16,12 @@ export default function PlatformSettings() {
     isRunning: boolean;
     hasInterval: boolean;
   } | null>(null);
-  const [cronLoading, setCronLoading] = useState(false);
+  const [, setCronLoading] = useState(false); // reserved for UI spinners
   const [nightlyCronStatus, setNightlyCronStatus] = useState<{
     isRunning: boolean;
     hasTimeout: boolean;
   } | null>(null);
-  const [nightlyCronLoading, setNightlyCronLoading] = useState(false);
+  const [, setNightlyCronLoading] = useState(false); // reserved for UI spinners
 
   useEffect(() => {
     if (config) {
@@ -40,6 +42,7 @@ export default function PlatformSettings() {
         handleCronAction('stop');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config?.manualQueue, cronStatus]);
 
   // Автоматически запускаем ночной cron при загрузке
@@ -47,6 +50,7 @@ export default function PlatformSettings() {
     if (nightlyCronStatus !== null && !nightlyCronStatus.isRunning) {
       handleNightlyCronAction('start');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nightlyCronStatus]);
 
   const checkCronStatus = async () => {
@@ -161,6 +165,77 @@ export default function PlatformSettings() {
       </div>
 
       <div className={styles.settingsList}>
+        <div className={styles.sectionTitle}>Редактирование логотипа</div>
+        <div className={styles.logoCard}>
+          {config.customLogoUrl ? (
+            <div className={styles.logoPreviewWrap}>
+              <img
+                src={config.customLogoUrl}
+                alt='Логотип'
+                className={styles.logoPreview}
+              />
+            </div>
+          ) : null}
+          <div
+            className={styles.logoControls}
+            style={{ gridColumn: config.customLogoUrl ? undefined : '1 / -1' }}
+          >
+            <div className={styles.logoBtnsRow}>
+              <ImageUploader
+                value={config.customLogoUrl}
+                showPreview={false}
+                onUpload={async url => {
+                  const newCfg = {
+                    ...config,
+                    customLogoUrl: url,
+                  } as PlatformConfig;
+                  setConfig(newCfg);
+                }}
+              />
+              {config.customLogoUrl && (
+                <button
+                  className={styles.saveButton}
+                  onClick={() =>
+                    setConfig({
+                      ...(config as PlatformConfig),
+                      customLogoUrl: '',
+                    })
+                  }
+                >
+                  Удалить
+                </button>
+              )}
+            </div>
+            {config.customLogoUrl && (
+              <div className={styles.logoToggleRow}>
+                <span className={styles.label}>Отображать</span>
+                <div className={styles.switchContainer}>
+                  <label className={styles.switch}>
+                    <input
+                      type='checkbox'
+                      checked={!!config.useCustomLogo}
+                      onChange={() =>
+                        setConfig({
+                          ...(config as PlatformConfig),
+                          useCustomLogo: !config.useCustomLogo,
+                        })
+                      }
+                      disabled={saving}
+                    />
+                    <span className={styles.slider}></span>
+                  </label>
+                  <span className={styles.statusText}>
+                    {config.useCustomLogo ? 'ENABLED' : 'DISABLED'}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className={styles.inputHint}>
+          Рекомендуем использовать PNG с прозрачным фоном. Отображение в меню и
+          очереди: 40 × 40/ 40 x 120.
+        </div>
         <div className={styles.settingRow}>
           <span className={styles.label}>Показывать кнопку меню</span>
           <div className={styles.switchContainer}>

@@ -30,6 +30,8 @@ export interface PlatformConfig {
   showQueueTab: boolean;
   gameDuration: number;
   manualQueue: boolean;
+  customLogoUrl?: string;
+  useCustomLogo?: boolean;
 }
 
 export async function authorizeAdmin(

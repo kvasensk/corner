@@ -20,6 +20,8 @@ interface MenuSectionProps {
   onToggleVisible?: () => void;
   showVisibility?: boolean;
   isVisible?: boolean;
+  highlight?: boolean;
+  onToggleItemVisible?: (itemId: string, nextVisible: boolean) => void;
 }
 
 export default function MenuSection({
@@ -33,6 +35,8 @@ export default function MenuSection({
   onToggleVisible,
   showVisibility,
   isVisible,
+  highlight,
+  onToggleItemVisible,
 }: MenuSectionProps) {
   const [localItems, setLocalItems] = React.useState(items);
   React.useEffect(() => {
@@ -52,7 +56,9 @@ export default function MenuSection({
   // но в режиме редактирования (когда показывается глазик) — показываем заголовок
   if (!localItems.length && !showVisibility) return null;
   return (
-    <div className={styles.section}>
+    <div
+      className={[styles.section, highlight ? styles.highlight : ''].join(' ')}
+    >
       <div className={styles.header}>
         <span className={styles.title}>
           {showVisibility ? (
@@ -83,7 +89,10 @@ export default function MenuSection({
                     <Draggable key={item.id} draggableId={item.id} index={idx}>
                       {provided => (
                         <div
-                          className={styles.itemRow}
+                          className={[
+                            styles.itemRow,
+                            styles.itemRowActive,
+                          ].join(' ')}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                         >
@@ -117,8 +126,42 @@ export default function MenuSection({
           </DragDropContext>
         ) : (
           localItems.map(item => (
-            <div key={item.id} className={styles.itemRow}>
-              <span>{item.name}</span>
+            <div
+              key={item.id}
+              className={[
+                styles.itemRow,
+                showVisibility &&
+                (item as { visible?: boolean }).visible === false
+                  ? styles.itemRowHidden
+                  : '',
+              ].join(' ')}
+            >
+              <span>
+                {showVisibility ? (
+                  <button
+                    onClick={() =>
+                      onToggleItemVisible?.(
+                        item.id,
+                        (item as { visible?: boolean }).visible === false
+                          ? true
+                          : false
+                      )
+                    }
+                    className={styles.eyeBtn}
+                    aria-label={
+                      (item as { visible?: boolean }).visible === false
+                        ? 'Показать товар'
+                        : 'Скрыть товар'
+                    }
+                  >
+                    <EyeIcon
+                      open={(item as { visible?: boolean }).visible !== false}
+                      size={20}
+                    />
+                  </button>
+                ) : null}
+                {item.name}
+              </span>
               <div className={styles.itemPrices}>
                 {onePriceColumn ? (
                   <span className={styles.price}>{item.price || '-'}</span>

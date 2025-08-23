@@ -21,9 +21,14 @@ const s3 = new AWS.S3({
 interface ImageUploaderProps {
   value?: string;
   onUpload: (url: string) => void;
+  showPreview?: boolean;
 }
 
-export default function ImageUploader({ value, onUpload }: ImageUploaderProps) {
+export default function ImageUploader({
+  value,
+  onUpload,
+  showPreview = true,
+}: ImageUploaderProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const fileInput = useRef<HTMLInputElement>(null);
@@ -78,7 +83,9 @@ export default function ImageUploader({ value, onUpload }: ImageUploaderProps) {
           ? 'Заменить картинку'
           : 'Загрузить картинку'}
       </button>
-      {value && <img src={value} alt='preview' className={styles.previewImg} />}
+      {showPreview && value && (
+        <img src={value} alt='preview' className={styles.previewImg} />
+      )}
       {error && <div className={styles.error}>{error}</div>}
     </div>
   );

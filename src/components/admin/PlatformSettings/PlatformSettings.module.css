@@ -43,6 +43,63 @@
   gap: 32px;
 }
 
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  opacity: 0.9;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Логотип - карточка настроек */
+.logoCard {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  align-items: flex-start;
+}
+.logoPreviewWrap {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+}
+.logoPreview {
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+.logoPlaceholder {
+  font-size: 11px;
+  color: #6b7280;
+}
+.logoControls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.logoBtnsRow {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.logoToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
 .settingRow {
   display: flex;
   align-items: center;
@@ -233,6 +290,14 @@
   }
   .settingRow {
     gap: 10px;
+  }
+  .logoCard {
+    grid-template-columns: 48px 1fr;
+    gap: 12px;
+  }
+  .logoPreviewWrap {
+    width: 48px;
+    height: 48px;
   }
 } 
 

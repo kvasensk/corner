@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useMemo, useState } from 'react';
 import { getMenuItems } from '../../lib/firebase';
 import type { MenuItem } from '../../types/menu';
@@ -6,6 +7,7 @@ import styles from './MenuPage.module.css';
 // import Link from 'next/link';
 import Image from 'next/image';
 import logo from '../../../public/assets/images/logo.png';
+import { usePlatformConfig } from '../../lib/PlatformConfigContext';
 import { db } from '../../lib/firebase';
 import {
   writeBatch,
@@ -20,11 +22,17 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
+import IOSSwitch from '../../uikit/IOSSwitch';
 
 export default function MenuPage() {
+  const { config: platformConfig } = usePlatformConfig();
   const [items, setItems] = useState<MenuItem[]>([]);
   const [editMode, setEditMode] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [sectionsDragEnabled, setSectionsDragEnabled] = React.useState(false);
+  const [itemsDragEnabled, setItemsDragEnabled] = React.useState(false);
+  const [visibilityManageEnabled, setVisibilityManageEnabled] =
+    React.useState(false);
   const [typeDocs, setTypeDocs] = useState<
     {
       id?: string;
@@ -39,6 +47,21 @@ export default function MenuPage() {
       setIsAdmin(localStorage.getItem('isAdmin') === 'true');
     }
   }, []);
+  // При выходе из режима редактирования скрываем инструменты и выключаем режимы
+  React.useEffect(() => {
+    if (!editMode) {
+      setSectionsDragEnabled(false);
+      setItemsDragEnabled(false);
+      setVisibilityManageEnabled(false);
+    }
+  }, [editMode]);
+
+  // При выходе из режима редактирования скрываем инструменты и выключаем DnD
+  React.useEffect(() => {
+    if (!editMode) {
+      setSectionsDragEnabled(false);
+    }
+  }, [editMode]);
   useEffect(() => {
     getMenuItems().then(rawItems => {
       setItems(
@@ -53,6 +76,10 @@ export default function MenuPage() {
           type: item.type || '',
           section: item.section || '',
           order: typeof item.order === 'number' ? item.order : 0,
+          visible:
+            typeof (item as { visible?: boolean }).visible === 'boolean'
+              ? (item as { visible?: boolean }).visible!
+              : true,
         }))
       );
     });
@@ -234,16 +261,33 @@ export default function MenuPage() {
     );
   }
 
+  async function handleToggleItemVisible(itemId: string, nextVisible: boolean) {
+    await updateDoc(doc(db, 'menu', 'items', 'items', itemId), {
+      visible: nextVisible,
+    });
+    setItems(prev =>
+      prev.map(i => (i.id === itemId ? { ...i, visible: nextVisible } : i))
+    );
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.logo}>
-          <Image
-            src={logo}
-            alt='Corner Coffee Spot Logo'
-            width={112}
-            height={63}
-          />
+          {platformConfig?.useCustomLogo && platformConfig?.customLogoUrl ? (
+            <img
+              src={platformConfig.customLogoUrl}
+              alt='Logo'
+              className={styles.customLogoImg}
+            />
+          ) : (
+            <Image
+              src={logo}
+              alt='Corner Coffee Spot Logo'
+              width={112}
+              height={63}
+            />
+          )}
         </div>
         <div className={styles.menu}>
           <button
@@ -257,13 +301,71 @@ export default function MenuPage() {
               className={styles.editBtn}
               onClick={() => setEditMode(m => !m)}
             >
-              {editMode ? 'Готово' : 'Передвинуть'}
+              {editMode ? 'Готово' : 'Редактировать'}
             </button>
           )}
         </div>
       </div>
+      {isAdmin && editMode && (
+        <div
+          className={styles.tools}
+          role='region'
+          aria-label='Инструменты редактирования'
+        >
+          <div className={styles.toolsRow}>
+            <label className={styles.dndToggle}>
+              <span>Перемещение разделов</span>
+              <IOSSwitch
+                checked={sectionsDragEnabled}
+                onChange={() => {
+                  setSectionsDragEnabled(prev => {
+                    const next = !prev;
+                    if (next) {
+                      setItemsDragEnabled(false);
+                      setVisibilityManageEnabled(false);
+                    }
+                    return next;
+                  });
+                }}
+              />
+            </label>
+            <label className={styles.dndToggle}>
+              <span>Перемещение товаров</span>
+              <IOSSwitch
+                checked={itemsDragEnabled}
+                onChange={() => {
+                  setItemsDragEnabled(prev => {
+                    const next = !prev;
+                    if (next) {
+                      setSectionsDragEnabled(false);
+                      setVisibilityManageEnabled(false);
+                    }
+                    return next;
+                  });
+                }}
+              />
+            </label>
+            <label className={styles.dndToggle}>
+              <span>Управление отображением</span>
+              <IOSSwitch
+                checked={visibilityManageEnabled}
+                onChange={() => {
+                  setVisibilityManageEnabled(prev => {
+                    const next = !prev;
+                    if (next) {
+                      setSectionsDragEnabled(false);
+                      setItemsDragEnabled(false);
+                    }
+                    return next;
+                  });
+                }}
+              />
+            </label>
+          </div>
+        </div>
+      )}
       <div className={styles.main}>
-        {editMode ? (
+        {sectionsDragEnabled ? (
           <DragDropContext onDragEnd={handleSectionsDragEnd}>
             <Droppable droppableId='sections'>
               {provided => (
@@ -284,12 +386,21 @@ export default function MenuPage() {
                             dontShowPriceType={i !== 0}
                             key={`${sec.typeValue}::${sec.sectionValue}`}
                             title={sec.title}
-                            items={sec.items}
+                            items={
+                              visibilityManageEnabled
+                                ? sec.items
+                                : sec.items.filter(
+                                    it =>
+                                      (it as { visible?: boolean }).visible !==
+                                      false
+                                  )
+                            }
                             onePriceColumn={sec.onePriceColumn}
                             showVolumeHeader={sec.showVolumeHeader}
-                            editable={true}
-                            showVisibility={editMode}
+                            editable={itemsDragEnabled}
+                            showVisibility={visibilityManageEnabled}
                             isVisible={sec.isVisible}
+                            highlight={true}
                             onToggleVisible={async () => {
                               const t = typeDocs.find(
                                 t => t.value === sec.typeValue
@@ -337,9 +448,13 @@ export default function MenuPage() {
                                 )
                               );
                             }}
-                            onReorder={newItems =>
+                            onReorder={(newItems: MenuItem[]) =>
                               handleReorder(sec.sectionValue, newItems)
                             }
+                            onToggleItemVisible={(
+                              itemId: string,
+                              nextVisible: boolean
+                            ) => handleToggleItemVisible(itemId, nextVisible)}
                           />
                         </div>
                       )}
@@ -356,13 +471,25 @@ export default function MenuPage() {
               dontShowPriceType={i !== 0}
               key={`${sec.typeValue}::${sec.sectionValue}`}
               title={sec.title}
-              items={sec.items}
+              items={
+                visibilityManageEnabled
+                  ? sec.items
+                  : sec.items.filter(
+                      it => (it as { visible?: boolean }).visible !== false
+                    )
+              }
               onePriceColumn={sec.onePriceColumn}
               showVolumeHeader={sec.showVolumeHeader}
-              editable={false}
-              onReorder={newItems => handleReorder(sec.sectionValue, newItems)}
-              showVisibility={false}
+              editable={itemsDragEnabled}
+              onReorder={(newItems: MenuItem[]) =>
+                handleReorder(sec.sectionValue, newItems)
+              }
+              showVisibility={visibilityManageEnabled}
               isVisible={sec.isVisible}
+              highlight={false}
+              onToggleItemVisible={(itemId: string, nextVisible: boolean) =>
+                handleToggleItemVisible(itemId, nextVisible)
+              }
               onToggleVisible={async () => {
                 const t = typeDocs.find(t => t.value === sec.typeValue);
                 if (!t) return;

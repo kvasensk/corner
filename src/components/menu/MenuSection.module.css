@@ -37,13 +37,24 @@
   font-weight: 700;
   font-size: 18px;
 }
-.items {
+.items { 
+  display: block;
 }
 .itemRow {
   display: flex;
   justify-content: space-between;
   margin-bottom: 4px;
   padding: 0 10px;
+}
+.itemRowActive {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.itemRowHidden {
+  opacity: 0.55;
 }
 .itemPrices {
   display: flex;
@@ -66,4 +77,13 @@
 
 .price{
   width: 26px;
+}
+
+/* Подсветка секции при активном DnD разделов */
+.highlight {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }

@@ -12,4 +12,5 @@ export interface MenuItem {
   section: string;
   order?: number;
   createdAt?: Timestamp | number;
+  visible?: boolean;
 }

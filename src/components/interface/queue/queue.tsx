@@ -235,7 +235,7 @@ export default function Queue() {
     }
   }, []);
 
-  // Фикс: при выключении ручного режима реактивировать playing
+  // Автоматический режим: если нет текущего, назначаем следующего из очереди
   useEffect(() => {
     if (!manualQueue && !current && waiting.length > 0) {
       const next = waiting[0];
@@ -245,7 +245,7 @@ export default function Queue() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [manualQueue]);
+  }, [manualQueue, current, waiting]);
 
   // Функция для синхронизации статусов в мануальном режиме
   const syncManualStatuses = async () => {
@@ -339,25 +339,35 @@ export default function Queue() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div className={styles.logo}>
-          <Image
-            src={cornerLogo}
-            alt='Corner Coffee Spot Logo'
-            width={112}
-            height={63}
-            className={styles.logoImage}
-          />
+          {platformConfig?.useCustomLogo && platformConfig?.customLogoUrl ? (
+            <img
+              src={platformConfig.customLogoUrl}
+              alt='Logo'
+              className={styles.customLogoImg}
+            />
+          ) : (
+            <Image
+              src={cornerLogo}
+              alt='Corner Coffee Spot Logo'
+              width={112}
+              height={63}
+              className={styles.logoImage}
+            />
+          )}
         </div>
         <div className={styles.menu}>
-          <button
-            className={styles.menuActive}
-            type='button'
-            onClick={() => router.push('/')}
-          >
-            Бильярд
-          </button>
+          {isAdmin && (
+            <button
+              className={styles.menuActive}
+              type='button'
+              onClick={() => router.push('/admin')}
+            >
+              Админка
+            </button>
+          )}
           {platformConfig?.showMenuTab && (
             <button
-              className={styles.menuInactive}
+              className={styles.menuActive}
               type='button'
               onClick={() => router.push('/menu')}
             >
@@ -368,13 +378,6 @@ export default function Queue() {
       </div>
       {isAdmin && (
         <div className={styles.adminPanel}>
-          <div
-            className={styles.adminInformer}
-            style={{ cursor: 'pointer' }}
-            onClick={() => router.push('/admin')}
-          >
-            Администратор
-          </div>
           <div
             className={styles.adminBtnClear}
             onClick={() => setShowModal(true)}
