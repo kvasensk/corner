@@ -662,6 +662,7 @@
 
   .formNote {
     margin-left: 12px;
+    margin-top: 4px;
   }
 }
 @media (min-width: 601px) {
