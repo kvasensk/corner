@@ -1,6 +1,9 @@
 .page {
   min-height: 100vh;
   height: 100vh;
+  /* Используем динамическую высоту в поддерживаемых браузерах (iOS Safari) */
+  min-height: 100dvh;
+  height: 100dvh;
   background: #1746d3;
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -246,10 +249,9 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding-bottom: 20px;
-  
-  /* Дополнительные отступы для Safari */
   padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  
+  /* Дополнительные отступы для Safari учтены выше */
   
   /* Flexbox для основного контента */
   flex: 1;
@@ -439,12 +441,11 @@
 
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,0.35);
-  z-index: 9999;
+  z-index: 2147483647;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -557,9 +558,10 @@
     min-height: 0;
   }
 
-  /* Дополнительные стили для предотвращения проблем с виртуальной клавиатурой */
+  /* Фикс перекрытия нижней панелью Safari: форма прилипает к низу и учитывает safe-area */
   .formBlock {
-    position: relative;
+    position: sticky;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
     z-index: 10;
   }
 
