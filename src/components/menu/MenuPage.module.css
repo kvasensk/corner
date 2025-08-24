@@ -133,7 +133,15 @@
   background: #1746d3;
   color: #fff;
 }
-
+.adminPanel {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  align-self: flex-end;
+  margin: 0 auto;
+  padding-right: 16px;
+  width: 100%;
+}
 /* Переключатель "Перемещение разделов" */
 .dndToggle {
   display: flex;

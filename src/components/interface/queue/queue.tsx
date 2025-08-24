@@ -111,6 +111,15 @@ export default function Queue() {
     e.preventDefault();
     if (!name.trim()) return;
 
+    // Если введено имя из списка зарезервированных (например, admin) — переходим в /admin
+    const normalize = (s: string) =>
+      s.trim().toLowerCase().replace(/\s+/g, ' ');
+    const reservedNames = new Set(['admin', 'админ']);
+    if (reservedNames.has(normalize(name))) {
+      router.push('/admin');
+      return;
+    }
+
     try {
       // Проверяем, есть ли сейчас playing или waiting
       const q = await getDocs(collection(db, 'queue'));
@@ -124,6 +133,7 @@ export default function Queue() {
         (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
       )[0];
       if (
+        !isAdmin &&
         deviceId &&
         last &&
         (last as QueueEntry & { deviceId?: string }).deviceId === deviceId
@@ -383,15 +393,6 @@ export default function Queue() {
           )}
         </div>
         <div className={styles.menu}>
-          {isAdmin && (
-            <button
-              className={styles.menuActive}
-              type='button'
-              onClick={() => router.push('/admin')}
-            >
-              Админка
-            </button>
-          )}
           {platformConfig?.showMenuTab && (
             <button
               className={styles.menuActive}
@@ -399,6 +400,15 @@ export default function Queue() {
               onClick={() => router.push('/menu')}
             >
               Меню
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              className={styles.menuActive}
+              type='button'
+              onClick={() => router.push('/admin')}
+            >
+              Админка
             </button>
           )}
         </div>

@@ -290,12 +290,6 @@ export default function MenuPage() {
           )}
         </div>
         <div className={styles.menu}>
-          <button
-            className={styles.menuActive}
-            onClick={() => (window.location.href = '/')}
-          >
-            Очередь
-          </button>
           {isAdmin && (
             <button
               className={styles.editBtn}
@@ -304,7 +298,23 @@ export default function MenuPage() {
               {editMode ? 'Готово' : 'Редактировать'}
             </button>
           )}
+          <button
+            className={styles.menuActive}
+            onClick={() => (window.location.href = '/')}
+          >
+            Очередь
+          </button>
         </div>
+      </div>
+      <div className={styles.adminPanel}>
+        {isAdmin && (
+          <button
+            className={styles.menuActive}
+            onClick={() => (window.location.href = '/admin')}
+          >
+            Админка
+          </button>
+        )}
       </div>
       {isAdmin && editMode && (
         <div
