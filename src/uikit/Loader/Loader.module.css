@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #1746d3;
+  background: #c7c6c6;
 }
 
 .loaderSvg {
@@ -17,7 +17,7 @@
 }
 
 .loaderText {
-  color: #fff;
+  color: #000000;
   margin-top: 24px;
   font-size: 20px;
   font-weight: 500;
