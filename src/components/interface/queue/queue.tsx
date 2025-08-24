@@ -372,8 +372,17 @@ export default function Queue() {
     loadInfoData();
   }, []);
 
+  const useCustom = !!platformConfig?.colors?.useCustomColors;
+  const qColors = platformConfig?.colors?.queue;
+
   return (
-    <div className={styles.page}>
+    <div
+      className={styles.page}
+      style={{
+        background: useCustom ? qColors?.pageBg : undefined,
+        color: useCustom ? qColors?.text : undefined,
+      }}
+    >
       <div className={styles.header}>
         <div className={styles.logo}>
           {platformConfig?.useCustomLogo && platformConfig?.customLogoUrl ? (
@@ -381,6 +390,44 @@ export default function Queue() {
               src={platformConfig.customLogoUrl}
               alt='Logo'
               className={styles.customLogoImg}
+              style={{
+                filter:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'brightness(0) invert(1)'
+                    : undefined,
+                WebkitMaskImage:
+                  useCustom && qColors?.logoUseTextColor
+                    ? `url(${platformConfig.customLogoUrl})`
+                    : undefined,
+                maskImage:
+                  useCustom && qColors?.logoUseTextColor
+                    ? `url(${platformConfig.customLogoUrl})`
+                    : undefined,
+                backgroundColor:
+                  useCustom && qColors?.logoUseTextColor
+                    ? qColors?.text || '#ffffff'
+                    : undefined,
+                WebkitMaskRepeat:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                maskRepeat:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                WebkitMaskSize:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                maskSize:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                WebkitMaskPosition:
+                  useCustom && qColors?.logoUseTextColor ? 'center' : undefined,
+                maskPosition:
+                  useCustom && qColors?.logoUseTextColor ? 'center' : undefined,
+              }}
             />
           ) : (
             <Image
@@ -389,6 +436,44 @@ export default function Queue() {
               width={112}
               height={63}
               className={styles.logoImage}
+              style={{
+                WebkitMaskImage:
+                  useCustom && qColors?.logoUseTextColor
+                    ? `url(${
+                        (cornerLogo as unknown as { src: string }).src || ''
+                      })`
+                    : undefined,
+                maskImage:
+                  useCustom && qColors?.logoUseTextColor
+                    ? `url(${
+                        (cornerLogo as unknown as { src: string }).src || ''
+                      })`
+                    : undefined,
+                WebkitMaskRepeat:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                maskRepeat:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                WebkitMaskSize:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                maskSize:
+                  useCustom && qColors?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                WebkitMaskPosition:
+                  useCustom && qColors?.logoUseTextColor ? 'center' : undefined,
+                maskPosition:
+                  useCustom && qColors?.logoUseTextColor ? 'center' : undefined,
+                backgroundColor:
+                  useCustom && qColors?.logoUseTextColor
+                    ? qColors?.text || '#ffffff'
+                    : undefined,
+              }}
             />
           )}
         </div>
@@ -396,6 +481,7 @@ export default function Queue() {
           {platformConfig?.showMenuTab && (
             <button
               className={styles.menuActive}
+              style={{ color: useCustom ? qColors?.text : undefined }}
               type='button'
               onClick={() => router.push('/menu')}
             >
@@ -405,6 +491,7 @@ export default function Queue() {
           {isAdmin && (
             <button
               className={styles.menuActive}
+              style={{ color: useCustom ? qColors?.text : undefined }}
               type='button'
               onClick={() => router.push('/admin')}
             >
@@ -472,28 +559,82 @@ export default function Queue() {
         onDone={handleDone}
         deleting={deleting}
         finishing={finishing}
+        theme={
+          useCustom
+            ? {
+                bg: qColors?.adminModalBg,
+                text: qColors?.adminModalText,
+                topBtnBg: qColors?.adminModalTopBtnBg,
+                topBtnText: qColors?.adminModalTopBtnText,
+                bottomBtnBg: qColors?.adminModalBottomBtnBg,
+                bottomBtnText: qColors?.adminModalBottomBtnText,
+              }
+            : undefined
+        }
       />
       {showInfoModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.infoModal}>
-            <div className={styles.infoModalContent}>
-              <h3>Информация</h3>
+          <div
+            className={styles.infoModal}
+            style={{
+              background: useCustom ? qColors?.adminModalBg : undefined,
+            }}
+          >
+            <div
+              className={styles.infoModalContent}
+              style={{
+                color: useCustom
+                  ? qColors?.infoModalText || qColors?.adminModalText
+                  : undefined,
+              }}
+            >
+              <h3
+                style={{
+                  color: useCustom ? qColors?.adminModalText : undefined,
+                }}
+              >
+                Информация
+              </h3>
               {manualQueue ? (
-                <p>
+                <p
+                  style={{
+                    color: useCustom
+                      ? qColors?.infoModalText || qColors?.adminModalText
+                      : undefined,
+                  }}
+                >
                   {infoData.manual?.useDescription &&
                   infoData.manual?.description
                     ? infoData.manual.description
                     : 'Пожалуйста, завершите свою игру в очереди после окончания партии.'}
                 </p>
               ) : (
-                <p>
+                <p
+                  style={{
+                    color: useCustom
+                      ? qColors?.infoModalText || qColors?.adminModalText
+                      : undefined,
+                  }}
+                >
                   {infoData.automatic?.useDescription &&
                   infoData.automatic?.description
                     ? infoData.automatic.description
                     : 'За помощью можно обратиться к Бариста.'}
                 </p>
               )}
-              <button onClick={() => setShowInfoModal(false)}>Понятно</button>
+              <button
+                onClick={() => setShowInfoModal(false)}
+                style={{
+                  background: useCustom
+                    ? qColors?.adminModalBottomBtnBg
+                    : undefined,
+                  color: useCustom
+                    ? qColors?.adminModalBottomBtnText
+                    : undefined,
+                }}
+              >
+                Понятно
+              </button>
             </div>
           </div>
         </div>
@@ -509,10 +650,18 @@ export default function Queue() {
               gameDuration={platformConfig?.gameDuration || 25}
               onAdminMenuClick={() => setModalUser(current)}
               deviceId={deviceId}
+              cardBg1={useCustom ? qColors?.cardBg1 : undefined}
+              cardBg2={useCustom ? qColors?.cardBg2 : undefined}
+              textColor={useCustom ? qColors?.text : undefined}
             />
           )}
         </div>
-        <div className={styles.queueLabel}>Очередь:</div>
+        <div
+          className={styles.queueLabel}
+          style={{ color: useCustom ? qColors?.text : undefined }}
+        >
+          Очередь:
+        </div>
         <div className={styles.queueScroll}>
           <QueueList
             waiting={waiting}
@@ -522,11 +671,31 @@ export default function Queue() {
             manualQueue={manualQueue}
             onQueueChange={syncManualStatuses}
             deviceId={deviceId}
+            cardBg1={useCustom ? qColors?.cardBg1 : undefined}
+            textColor={useCustom ? qColors?.text : undefined}
+            adminTheme={
+              useCustom
+                ? {
+                    bg: qColors?.adminModalBg,
+                    text: qColors?.adminModalText,
+                    topBtnBg: qColors?.adminModalTopBtnBg,
+                    topBtnText: qColors?.adminModalTopBtnText,
+                    bottomBtnBg: qColors?.adminModalBottomBtnBg,
+                    bottomBtnText: qColors?.adminModalBottomBtnText,
+                  }
+                : undefined
+            }
           />
         </div>
-        <div className={styles.formBlock}>
+        <div
+          className={styles.formBlock}
+          style={{ background: useCustom ? qColors?.cardBg1 : undefined }}
+        >
           <div className={styles.formHintRow}>
-            <span className={styles.formHint}>
+            <span
+              className={styles.formHint}
+              style={{ color: useCustom ? qColors?.text : undefined }}
+            >
               Чтобы встать в очередь, нужно купить напиток и подождать*
             </span>
             <span
@@ -538,7 +707,10 @@ export default function Queue() {
             </span>
           </div>
           <form onSubmit={handleAdd} className={styles.form}>
-            <div className={styles.formInner}>
+            <div
+              className={styles.formInner}
+              style={{ background: useCustom ? '#f5f7fa' : undefined }}
+            >
               <input
                 type='text'
                 placeholder='Имя'
@@ -551,6 +723,14 @@ export default function Queue() {
               <button
                 type='submit'
                 className={styles.button}
+                style={{
+                  background: useCustom ? qColors?.joinButtonBg : undefined,
+                  color: useCustom
+                    ? qColors?.text
+                      ? '#000'
+                      : undefined
+                    : undefined,
+                }}
                 disabled={!name.trim()}
                 aria-label='В очередь'
               >
@@ -558,7 +738,10 @@ export default function Queue() {
               </button>
             </div>
           </form>
-          <div className={styles.formNote}>
+          <div
+            className={styles.formNote}
+            style={{ color: useCustom ? qColors?.text : undefined }}
+          >
             *1 напиток ~ {platformConfig?.gameDuration ?? 25} минут
           </div>
         </div>

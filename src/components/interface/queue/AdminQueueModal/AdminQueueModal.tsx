@@ -12,6 +12,14 @@ interface AdminQueueModalProps {
   onDone: () => void;
   deleting: boolean;
   finishing: boolean;
+  theme?: {
+    bg?: string;
+    text?: string;
+    topBtnBg?: string;
+    topBtnText?: string;
+    bottomBtnBg?: string;
+    bottomBtnText?: string;
+  };
 }
 
 export default function AdminQueueModal({
@@ -22,6 +30,7 @@ export default function AdminQueueModal({
   onDone,
   deleting,
   finishing,
+  theme,
 }: AdminQueueModalProps) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
@@ -33,10 +42,15 @@ export default function AdminQueueModal({
 
   return ReactDOM.createPortal(
     <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
+      <div
+        className={styles.modal}
+        style={{ background: theme?.bg, color: theme?.text }}
+      >
         <div className={styles.userInfoRow}>
-          <span className={styles.userName}>{user.name}</span>
-          <span className={styles.userStatus}>
+          <span className={styles.userName} style={{ color: theme?.text }}>
+            {user.name}
+          </span>
+          <span className={styles.userStatus} style={{ color: theme?.text }}>
             {user.status === 'playing' && 'Играет'}
             {user.status === 'waiting' && 'В очереди'}
             {user.status === 'done' && 'Сыграл'}
@@ -54,6 +68,7 @@ export default function AdminQueueModal({
           onClick={onDone}
           disabled={finishing || user.status !== 'playing'}
           className={styles.doneBtn}
+          style={{ background: theme?.topBtnBg, color: theme?.topBtnText }}
         >
           {finishing
             ? 'Завершение...'
@@ -67,6 +82,10 @@ export default function AdminQueueModal({
           onClick={onClose}
           disabled={deleting || finishing}
           className={styles.cancelBtn}
+          style={{
+            background: theme?.bottomBtnBg,
+            color: theme?.bottomBtnText,
+          }}
         >
           Закрыть
         </button>

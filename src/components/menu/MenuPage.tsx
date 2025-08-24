@@ -271,7 +271,17 @@ export default function MenuPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <div
+      className={styles.page}
+      style={{
+        background: platformConfig?.colors?.useCustomColors
+          ? platformConfig?.colors?.menu?.pageBg
+          : undefined,
+        color: platformConfig?.colors?.useCustomColors
+          ? platformConfig?.colors?.menu?.text
+          : undefined,
+      }}
+    >
       <div className={styles.header}>
         <div className={styles.logo}>
           {platformConfig?.useCustomLogo && platformConfig?.customLogoUrl ? (
@@ -279,6 +289,53 @@ export default function MenuPage() {
               src={platformConfig.customLogoUrl}
               alt='Logo'
               className={styles.customLogoImg}
+              style={{
+                WebkitMaskImage:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? `url(${platformConfig.customLogoUrl})`
+                    : undefined,
+                maskImage:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? `url(${platformConfig.customLogoUrl})`
+                    : undefined,
+                WebkitMaskRepeat:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                maskRepeat:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                WebkitMaskSize:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                maskSize:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                WebkitMaskPosition:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'center'
+                    : undefined,
+                maskPosition:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'center'
+                    : undefined,
+                backgroundColor:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? platformConfig?.colors?.menu?.text || '#ffffff'
+                    : undefined,
+              }}
             />
           ) : (
             <Image
@@ -286,6 +343,53 @@ export default function MenuPage() {
               alt='Corner Coffee Spot Logo'
               width={112}
               height={63}
+              style={{
+                WebkitMaskImage:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? `url(${(logo as unknown as { src: string }).src || ''})`
+                    : undefined,
+                maskImage:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? `url(${(logo as unknown as { src: string }).src || ''})`
+                    : undefined,
+                WebkitMaskRepeat:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                maskRepeat:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'no-repeat'
+                    : undefined,
+                WebkitMaskSize:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                maskSize:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'contain'
+                    : undefined,
+                WebkitMaskPosition:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'center'
+                    : undefined,
+                maskPosition:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? 'center'
+                    : undefined,
+                backgroundColor:
+                  platformConfig?.colors?.useCustomColors &&
+                  platformConfig?.colors?.menu?.logoUseTextColor
+                    ? platformConfig?.colors?.menu?.text || '#ffffff'
+                    : undefined,
+              }}
             />
           )}
         </div>
@@ -293,6 +397,11 @@ export default function MenuPage() {
           {isAdmin && (
             <button
               className={styles.editBtn}
+              style={{
+                color: platformConfig?.colors?.useCustomColors
+                  ? platformConfig?.colors?.menu?.text
+                  : undefined,
+              }}
               onClick={() => setEditMode(m => !m)}
             >
               {editMode ? 'Готово' : 'Редактировать'}
@@ -300,6 +409,11 @@ export default function MenuPage() {
           )}
           <button
             className={styles.menuActive}
+            style={{
+              color: platformConfig?.colors?.useCustomColors
+                ? platformConfig?.colors?.menu?.text
+                : undefined,
+            }}
             onClick={() => (window.location.href = '/')}
           >
             Очередь
@@ -310,6 +424,11 @@ export default function MenuPage() {
         {isAdmin && (
           <button
             className={styles.menuActive}
+            style={{
+              color: platformConfig?.colors?.useCustomColors
+                ? platformConfig?.colors?.menu?.text
+                : undefined,
+            }}
             onClick={() => (window.location.href = '/admin')}
           >
             Админка

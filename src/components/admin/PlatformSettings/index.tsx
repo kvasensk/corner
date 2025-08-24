@@ -6,12 +6,14 @@ import ImageUploader from '../ImageUploader';
 // import { db } from '../../../lib/firebase';
 import { usePlatformConfig } from '../../../lib/PlatformConfigContext';
 import type { PlatformConfig } from '../../../lib/firebase';
+import ColorSchemeModal from './ColorSchemeModal';
 
 export default function PlatformSettings() {
   const { config, setConfig, loading, error } = usePlatformConfig();
   const [saving, setSaving] = useState(false);
   const [durationDraft, setDurationDraft] = useState<string>('');
   const [saved, setSaved] = useState(false);
+  const [colorModalOpen, setColorModalOpen] = useState(false);
   const [cronStatus, setCronStatus] = useState<{
     isRunning: boolean;
     hasInterval: boolean;
@@ -165,6 +167,18 @@ export default function PlatformSettings() {
       </div>
 
       <div className={styles.settingsList}>
+        <div className={styles.settingRow}>
+          <span className={styles.label}>Цветовая схема</span>
+          <button
+            className={styles.saveButton}
+            onClick={() => setColorModalOpen(true)}
+            aria-haspopup='dialog'
+            aria-expanded={colorModalOpen}
+          >
+            Настройки цветовой схемы
+          </button>
+        </div>
+
         <div className={styles.sectionTitle}>Редактирование логотипа</div>
         <div className={styles.logoCard}>
           {config.customLogoUrl ? (
@@ -361,6 +375,10 @@ export default function PlatformSettings() {
       </div>
       {saving && <div className={styles.saving}>SAVING CONFIGURATION...</div>}
       {error && <div className={styles.errorMsg}>{error}</div>}
+      <ColorSchemeModal
+        open={colorModalOpen}
+        onClose={() => setColorModalOpen(false)}
+      />
     </div>
   );
 }

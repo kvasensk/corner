@@ -32,6 +32,29 @@ export interface PlatformConfig {
   manualQueue: boolean;
   customLogoUrl?: string;
   useCustomLogo?: boolean;
+  colors?: {
+    useCustomColors?: boolean;
+    queue?: {
+      pageBg?: string;
+      cardBg1?: string;
+      cardBg2?: string;
+      text?: string;
+      joinButtonBg?: string;
+      adminModalBg?: string;
+      adminModalText?: string;
+      adminModalTopBtnBg?: string;
+      adminModalTopBtnText?: string;
+      adminModalBottomBtnBg?: string;
+      adminModalBottomBtnText?: string;
+      infoModalText?: string;
+      logoUseTextColor?: boolean;
+    };
+    menu?: {
+      pageBg?: string;
+      text?: string;
+      logoUseTextColor?: boolean;
+    };
+  };
 }
 
 export async function authorizeAdmin(

@@ -17,6 +17,9 @@ export default function NowPlayingBlock({
   gameDuration = 25,
   onAdminMenuClick,
   deviceId,
+  cardBg1,
+  cardBg2,
+  textColor,
 }: {
   current: QueueEntry;
   timeLeft: number;
@@ -25,6 +28,9 @@ export default function NowPlayingBlock({
   gameDuration?: number;
   onAdminMenuClick?: () => void;
   deviceId?: string | null;
+  cardBg1?: string;
+  cardBg2?: string;
+  textColor?: string;
 }) {
   // В ручном режиме показываем сплошной фон (одно деление)
   const total = manualQueue ? 1 : gameDuration;
@@ -35,23 +41,31 @@ export default function NowPlayingBlock({
 
   return (
     <div className={styles.nowPlayingBlock}>
-      <div className={styles.label}>Играет сейчас:</div>
-      <div className={styles.card}>
+      <div className={styles.label} style={{ color: textColor }}>
+        Играет сейчас:
+      </div>
+      <div
+        className={styles.card}
+        style={{ color: textColor, background: cardBg1 }}
+      >
         <div className={styles.progressBg}>
           {Array.from({ length: total }).map((_, i) => (
             <div
               key={i}
               className={styles.progressBar}
               style={{
-                background: i < played ? '#103ef5' : '#2a3e7c',
+                background:
+                  i < played ? cardBg1 || '#103ef5' : cardBg2 || '#2a3e7c',
                 opacity: i < played ? 0.7 : 0.2,
               }}
             />
           ))}
         </div>
         <div className={styles.cardContent}>
-          <span className={styles.name}>{current.name}</span>
-          <span className={styles.queueTime}>
+          <span className={styles.name} style={{ color: textColor }}>
+            {current.name}
+          </span>
+          <span className={styles.queueTime} style={{ color: textColor }}>
             (
             {new Date(current.time).toLocaleTimeString([], {
               hour: '2-digit',
@@ -62,9 +76,9 @@ export default function NowPlayingBlock({
         </div>
         <div className={styles.wrap}>
           {!manualQueue && (
-            <span className={styles.timeInfo}>
+            <span className={styles.timeInfo} style={{ color: textColor }}>
               Осталось играть
-              <span className={styles.timeValue}>
+              <span className={styles.timeValue} style={{ color: textColor }}>
                 ~{formatTimeLeft(timeLeft)}
               </span>
             </span>
@@ -76,19 +90,19 @@ export default function NowPlayingBlock({
               className={styles.adminMenuBtn}
               onClick={e => {
                 e.stopPropagation();
-                onAdminMenuClick && onAdminMenuClick();
+                if (onAdminMenuClick) onAdminMenuClick();
               }}
               onTouchStart={e => {
                 e.stopPropagation();
-                onAdminMenuClick && onAdminMenuClick();
+                if (onAdminMenuClick) onAdminMenuClick();
               }}
               title='Управление'
             >
               <svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
-                <circle cx='12' cy='12' r='10' fill='#e0eaff' />
-                <circle cx='12' cy='8' r='1.5' fill='#1746d3' />
-                <circle cx='12' cy='12' r='1.5' fill='#1746d3' />
-                <circle cx='12' cy='16' r='1.5' fill='#1746d3' />
+                <circle cx='12' cy='12' r='10' fill={textColor || '#e0eaff'} />
+                <circle cx='12' cy='8' r='1.5' fill={cardBg1 || '#1746d3'} />
+                <circle cx='12' cy='12' r='1.5' fill={cardBg1 || '#1746d3'} />
+                <circle cx='12' cy='16' r='1.5' fill={cardBg1 || '#1746d3'} />
               </svg>
             </button>
           )}

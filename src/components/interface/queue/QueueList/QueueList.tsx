@@ -13,6 +13,9 @@ export default function QueueList({
   manualQueue = false,
   onQueueChange,
   deviceId,
+  cardBg1,
+  textColor,
+  adminTheme,
 }: {
   waiting: QueueEntry[];
   done: QueueEntry[];
@@ -21,6 +24,16 @@ export default function QueueList({
   manualQueue?: boolean;
   onQueueChange?: () => void;
   deviceId?: string | null;
+  cardBg1?: string;
+  textColor?: string;
+  adminTheme?: {
+    bg?: string;
+    text?: string;
+    topBtnBg?: string;
+    topBtnText?: string;
+    bottomBtnBg?: string;
+    bottomBtnText?: string;
+  };
 }) {
   const [modalUser, setModalUser] = useState<QueueEntry | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -74,12 +87,18 @@ export default function QueueList({
   return (
     <div className={styles.queueWrap}>
       <div className={styles.queueBlock}>
-        {waiting.map((entry, idx) => (
-          <div className={styles.card} key={entry.id}>
+        {waiting.map(entry => (
+          <div
+            className={styles.card}
+            key={entry.id}
+            style={{ background: cardBg1, color: textColor }}
+          >
             <div className={styles.cardContent}>
-              <span className={styles.name}>{entry.name}</span>
+              <span className={styles.name} style={{ color: textColor }}>
+                {entry.name}
+              </span>
               <div className={styles.queueTimeWrap}>
-                <span className={styles.queueTime}>
+                <span className={styles.queueTime} style={{ color: textColor }}>
                   (
                   {new Date(entry.time).toLocaleTimeString([], {
                     hour: '2-digit',
@@ -91,7 +110,9 @@ export default function QueueList({
             </div>
             <div className={styles.wrap}>
               {!manualQueue && (
-                <span className={styles.timeInfo}>В очереди</span>
+                <span className={styles.timeInfo} style={{ color: textColor }}>
+                  В очереди
+                </span>
               )}
               {(isAdmin ||
                 manualQueue ||
@@ -109,10 +130,30 @@ export default function QueueList({
                   title='Управление'
                 >
                   <svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
-                    <circle cx='12' cy='12' r='10' fill='#e0eaff' />
-                    <circle cx='12' cy='8' r='1.5' fill='#1746d3' />
-                    <circle cx='12' cy='12' r='1.5' fill='#1746d3' />
-                    <circle cx='12' cy='16' r='1.5' fill='#1746d3' />
+                    <circle
+                      cx='12'
+                      cy='12'
+                      r='10'
+                      fill={textColor || '#e0eaff'}
+                    />
+                    <circle
+                      cx='12'
+                      cy='8'
+                      r='1.5'
+                      fill={cardBg1 || '#1746d3'}
+                    />
+                    <circle
+                      cx='12'
+                      cy='12'
+                      r='1.5'
+                      fill={cardBg1 || '#1746d3'}
+                    />
+                    <circle
+                      cx='12'
+                      cy='16'
+                      r='1.5'
+                      fill={cardBg1 || '#1746d3'}
+                    />
                   </svg>
                 </button>
               )}
@@ -120,9 +161,16 @@ export default function QueueList({
           </div>
         ))}
         {done.map(entry => (
-          <div className={`${styles.card} ${styles.cardDone}`} key={entry.id}>
+          <div
+            className={`${styles.card} ${styles.cardDone}`}
+            key={entry.id}
+            style={{ background: cardBg1, color: textColor }}
+          >
             <div className={styles.cardContent}>
-              <span className={`${styles.name} ${styles.nameDone}`}>
+              <span
+                className={`${styles.name} ${styles.nameDone}`}
+                style={{ color: textColor }}
+              >
                 {entry.name}
               </span>
               <span className={styles.queueTime}>
@@ -153,6 +201,7 @@ export default function QueueList({
         onDone={handleDone}
         deleting={deleting}
         finishing={finishing}
+        theme={adminTheme}
       />
     </div>
   );
