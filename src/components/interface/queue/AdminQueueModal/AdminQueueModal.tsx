@@ -1,6 +1,8 @@
 import styles from './AdminQueueModal.module.css';
 import { QueueEntry } from '../../../../types/queue';
 import { FaTrash } from 'react-icons/fa';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 interface AdminQueueModalProps {
   user: QueueEntry | null;
@@ -21,8 +23,15 @@ export default function AdminQueueModal({
   deleting,
   finishing,
 }: AdminQueueModalProps) {
-  if (!open || !user) return null;
-  return (
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!open || !user || !mounted) return null;
+
+  return ReactDOM.createPortal(
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
         <div className={styles.userInfoRow}>
@@ -62,6 +71,7 @@ export default function AdminQueueModal({
           Закрыть
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
