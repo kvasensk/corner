@@ -561,8 +561,13 @@
   /* Фикс перекрытия нижней панелью Safari: форма прилипает к низу и учитывает safe-area */
   .formBlock {
     position: sticky;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 2px);
     z-index: 10;
+  }
+
+  /* Уменьшаем нижний внутренний отступ контейнера, чтобы не было лишнего пустого места */
+  .main {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .input {
