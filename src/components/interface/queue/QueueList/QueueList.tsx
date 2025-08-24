@@ -78,21 +78,16 @@ export default function QueueList({
           <div className={styles.card} key={entry.id}>
             <div className={styles.cardContent}>
               <span className={styles.name}>{entry.name}</span>
-              <span className={styles.queueTime}>
-                (
-                {new Date(entry.time).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-                )
-              </span>
-              {isAdmin && (
-                <span className={styles.statusTag}>
-                  {entry.status === 'playing' && 'Играет'}
-                  {entry.status === 'waiting' && 'В очереди'}
-                  {entry.status === 'done' && 'Сыграл'}
+              <div className={styles.queueTimeWrap}>
+                <span className={styles.queueTime}>
+                  (
+                  {new Date(entry.time).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                  )
                 </span>
-              )}
+              </div>
             </div>
             <div className={styles.wrap}>
               {!manualQueue && (

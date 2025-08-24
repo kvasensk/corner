@@ -59,13 +59,6 @@ export default function NowPlayingBlock({
             })}
             )
           </span>
-          {isAdmin && (
-            <span className={styles.statusTag}>
-              {current.status === 'playing' && 'Играет'}
-              {current.status === 'waiting' && 'В очереди'}
-              {current.status === 'done' && 'Сыграл'}
-            </span>
-          )}
         </div>
         <div className={styles.wrap}>
           {!manualQueue && (

@@ -366,8 +366,8 @@
   transform: translateZ(0);
 }
 .button {
-  background: #ffd600;
-  color: #03011b;
+  background: #c208a3;
+  color: #f5f5f5;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -605,28 +605,57 @@
 
 /* Специальные стили для iPhone 13 mini и других очень маленьких экранов */
 @media (max-width: 375px) {
+
+  .formBlock {
+    padding: 6px 6px 4px 6px;
+  }
+
+  .formHint {
+    font-size: 10px;
+    margin-left: 8px;
+  }
+
+  .formInfoIcon {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+.formInner{
+  padding: 4px 1px 8px 8px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
   .button {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
-    padding: 0 10px;
+    padding: 0px;
     min-width: 70px;
-    height: 36px;
+    height: 34px;
+    border-radius: 6px;
+    margin-top: 4px;
   }
   
-  .formInner {
-    gap: 8px;
-  }
   
   .input {
     font-size: 16px;
-    padding: 10px 12px;
+    padding: 0 12px;
+    border-radius: 6px;
   }
   
   .main {
-    padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-}
 
+  .queueLabel {
+    font-size: 12px;
+    margin-top: 8px;
+}
+}
 @media (min-width: 601px) {
   .page {
     display: flex;

@@ -281,3 +281,26 @@
     font-size: 1rem;
   }
 } 
+
+@media (max-width: 375px) {
+  .card {
+    padding: 4px 6px 4px 12px;
+    height: 58px;
+  }
+  .queueTimeWrap {
+    display: flex;
+    gap: 4px;
+  }
+  .name {
+    font-size: 0.9rem;
+    margin-left: 2px;
+  }
+  
+  .timeInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+  
+}
