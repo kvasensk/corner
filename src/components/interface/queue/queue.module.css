@@ -366,8 +366,8 @@
   transform: translateZ(0);
 }
 .button {
-  background: #c208a3;
-  color: #f5f5f5;
+  background: #b30278;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -615,6 +615,10 @@
     margin-left: 8px;
   }
 
+  .formHintRow {
+    margin-top: 2px;
+  }
+
   .formInfoIcon {
     width: 20px;
     height: 20px;
@@ -654,7 +658,11 @@
   .queueLabel {
     font-size: 12px;
     margin-top: 8px;
-}
+  }
+
+  .formNote {
+    margin-left: 12px;
+  }
 }
 @media (min-width: 601px) {
   .page {
