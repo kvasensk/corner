@@ -141,7 +141,7 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 24px 24px 32px 24px;
+  padding: 16px 16px calc(env(safe-area-inset-bottom, 0px) + 16px) 16px;
   border-top: 1px solid rgba(30, 41, 59, 0.08);
   background: rgba(255,255,255,0.14);
   backdrop-filter: blur(8px);
@@ -150,22 +150,22 @@
 .adminBtnMain,
 .adminBtnLogout {
   width: 100%;
-  padding: 14px 18px;
+  padding: 12px 12px;
   margin-bottom: 12px;
   background: rgba(255,255,255,0.32);
   border: none;
   border-radius: 12px;
   color: #222;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(.4,0,.2,1);
   display: flex;
   align-items: center;
   gap: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  text-transform: none;
+  letter-spacing: 0.2px;
   box-shadow: 0 2px 8px rgba(30, 41, 59, 0.06);
   opacity: 0.92;
 }
