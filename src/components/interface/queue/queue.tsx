@@ -478,6 +478,16 @@ export default function Queue() {
           )}
         </div>
         <div className={styles.menu}>
+          {platformConfig?.showSupportTab && (
+            <button
+              className={styles.menuActive}
+              style={{ color: useCustom ? qColors?.text : undefined }}
+              type='button'
+              onClick={() => router.push('/supportGoal')}
+            >
+              Поддержать
+            </button>
+          )}
           {platformConfig?.showMenuTab && (
             <button
               className={styles.menuActive}

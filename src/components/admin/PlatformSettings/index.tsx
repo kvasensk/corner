@@ -269,6 +269,24 @@ export default function PlatformSettings() {
         </div>
 
         <div className={styles.settingRow}>
+          <span className={styles.label}>Показывать кнопку "Поддержать"</span>
+          <div className={styles.switchContainer}>
+            <label className={styles.switch}>
+              <input
+                type='checkbox'
+                checked={config.showSupportTab}
+                onChange={handleChange('showSupportTab')}
+                disabled={saving}
+              />
+              <span className={styles.slider}></span>
+            </label>
+            <span className={styles.statusText}>
+              {config.showSupportTab ? 'ENABLED' : 'DISABLED'}
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.settingRow}>
           <span className={styles.label}>
             Управление очередью любым игроком
           </span>

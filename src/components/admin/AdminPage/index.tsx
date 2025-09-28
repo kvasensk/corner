@@ -53,6 +53,7 @@ export default function AdminPage() {
         setIsAuth(true);
         if (typeof window !== 'undefined') {
           localStorage.setItem('isAdmin', 'true');
+          localStorage.setItem('adminUsername', username);
           router.push('/');
         }
       } else {
@@ -69,6 +70,7 @@ export default function AdminPage() {
     setIsAuth(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('isAdmin');
+      localStorage.removeItem('adminUsername');
       router.push('/');
     }
   };
