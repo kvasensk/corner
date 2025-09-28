@@ -269,7 +269,7 @@ export default function PlatformSettings() {
         </div>
 
         <div className={styles.settingRow}>
-          <span className={styles.label}>Показывать кнопку "Поддержать"</span>
+          <span className={styles.label}>Показывать кнопку Поддержать </span>
           <div className={styles.switchContainer}>
             <label className={styles.switch}>
               <input
